@@ -1,6 +1,4 @@
 spring:
   data:
     mongodb:
-      uri : mongodb://localhost:27017/movie2gether
-server:
-  port: 8081
+      uri : ${MONGO_DB_PATH}
