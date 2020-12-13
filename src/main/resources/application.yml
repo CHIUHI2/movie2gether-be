@@ -2,3 +2,7 @@ spring:
   data:
     mongodb:
       uri : ${MONGO_DB_PATH}
+management:
+  endpoint:
+    health:
+      show-components: 'always'
