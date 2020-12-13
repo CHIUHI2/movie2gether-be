@@ -6,3 +6,7 @@ before_install:
 
 jdk:
   - oraclejdk8
+
+branches:
+  only:
+    - master
