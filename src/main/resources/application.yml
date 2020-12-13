@@ -2,3 +2,5 @@ spring:
   data:
     mongodb:
       uri : ${MONGO_DB_PATH}
+
+MONGO_DB_PATH : "mongodb://localhost:27017/movie2gether"
