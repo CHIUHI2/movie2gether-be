@@ -1,5 +1,6 @@
 package com.bootcamp.movie2gether.advice;
 
+import com.bootcamp.movie2gether.movie.exception.AlreadyBookedException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -19,4 +20,12 @@ public class GlobalControllerAdvice {
     public ErrorResponse handleDuplicateKey(DuplicateKeyException exception) {
         return new ErrorResponse(HttpStatus.CONFLICT.name(), exception.getMessage());
     }
+
+    @ResponseStatus(HttpStatus.CONFLICT)
+    @ExceptionHandler({AlreadyBookedException.class})
+    public ErrorResponse handleBookDuplication(AlreadyBookedException exception) {
+        return new ErrorResponse(HttpStatus.CONFLICT.name(), exception.getMessage());
+    }
+
+
 }
