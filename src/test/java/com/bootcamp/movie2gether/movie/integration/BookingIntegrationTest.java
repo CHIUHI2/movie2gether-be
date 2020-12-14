@@ -16,6 +16,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.Duration;
@@ -49,6 +50,7 @@ public class BookingIntegrationTest {
     BookingService bookingService;
 
     @Test
+    @WithMockUser(value = "spring")
     void should_get_paged_sessions_when_get_sessions_given_10_movie_sessions() throws Exception {
         //given
         Movie movie = movieRepository.save(Movie.builder().onShow(true).title("Interstellar").build());
