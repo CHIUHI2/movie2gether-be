@@ -12,6 +12,7 @@ import com.bootcamp.movie2gether.movie.repository.SessionRepository;
 import com.bootcamp.movie2gether.movie.service.BookingService;
 import com.bootcamp.movie2gether.user.entity.User;
 import com.bootcamp.movie2gether.user.repository.UserRepository;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -21,6 +22,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -49,9 +51,18 @@ public class BookingIntegrationTest {
     @Autowired
     BookingService bookingService;
 
+    @BeforeEach
+    void clearDB() {
+        bookingRepository.deleteAll();
+        sessionRepository.deleteAll();
+        cinemaRepository.deleteAll();
+        movieRepository.deleteAll();
+        userRepository.deleteAll();
+    }
+
     @Test
     @WithMockUser(value = "spring")
-    void should_get_paged_sessions_when_get_sessions_given_10_movie_sessions() throws Exception {
+    void should_get_paged_session_details_when_get_sessions_given_20_movie_sessions() throws Exception {
         //given
         Movie movie = movieRepository.save(Movie.builder().onShow(true).title("Interstellar").build());
         Cinema cinema = cinemaRepository.save(
@@ -79,21 +90,20 @@ public class BookingIntegrationTest {
             }
         });
 
-
         //when
         //then
         mockMvc.perform(get("/sessions?page=0&pageSize=1"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.content[0].id").isString())
-                .andExpect(jsonPath("$.content[0].movieId").value(movie.getId()))
-                .andExpect(jsonPath("$.content[0].movieName").value("Interstellar"))
-                .andExpect(jsonPath("$.content[0].cinemaId").value(cinema.getId()))
-                .andExpect(jsonPath("$.content[0].cinemaName").value("cinema"))
-                .andExpect(jsonPath("$.content[0].totalSeats").value(20))
-                .andExpect(jsonPath("$.content[0].availableSeats").value(19))
-                .andExpect(jsonPath("$.content[0].startTime").value(startTime.toString()))
-                .andExpect(jsonPath("$.content[0].endTime").value(endTime.toString()))
-                .andExpect(jsonPath("$.content", hasSize(2)))
+                .andExpect(jsonPath("$", hasSize(1)))
+                .andExpect(jsonPath("$.[0].id").isString())
+                .andExpect(jsonPath("$.[0].movie.id").value(movie.getId().toHexString()))
+                .andExpect(jsonPath("$.[0].movie.title").value("Interstellar"))
+                .andExpect(jsonPath("$.[0].cinema.id").value(cinema.getId().toHexString()))
+                .andExpect(jsonPath("$.[0].cinema.name").value("cinema"))
+                .andExpect(jsonPath("$.[0].cinema.seats", hasSize(10)))
+                .andExpect(jsonPath("$.[0].bookings", hasSize(1)))
+                .andExpect(jsonPath("$.[0].startTime").value(startTime.format(DateTimeFormatter.ofPattern("uuuu-MM-dd'T'HH:mm:ss.SSS"))))
+                .andExpect(jsonPath("$.[0].endTime").value(endTime.format(DateTimeFormatter.ofPattern("uuuu-MM-dd'T'HH:mm:ss.SSS"))))
         ;
     }
 }
