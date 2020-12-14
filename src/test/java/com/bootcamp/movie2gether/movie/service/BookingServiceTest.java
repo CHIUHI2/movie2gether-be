@@ -35,7 +35,6 @@ public class BookingServiceTest {
     @Autowired
     MovieRepository movieRepository;
 
-
     @BeforeEach
     void clearDB() {
         bookingRepository.deleteAll();
@@ -43,7 +42,7 @@ public class BookingServiceTest {
     }
 
     @Test
-    void should_store_and_return_booking_when_book_ticket_given_session_seat_and_user() {
+    void should_store_and_return_booking_when_book_ticket_given_session_seat_and_user() throws AlreadyBookedException {
         //given
         BookingService bookingService = new BookingService(bookingRepository, userRepository, sessionRepository);
 
@@ -72,7 +71,7 @@ public class BookingServiceTest {
     }
 
     @Test
-    void should_throw_exception_and_do_nothing_when_book_ticket_given_session_seat_and_user_already_booked() {
+    void should_throw_exception_and_do_nothing_when_book_ticket_given_session_seat_and_user_already_booked() throws AlreadyBookedException {
         //given
         BookingService bookingService = new BookingService(bookingRepository, userRepository, sessionRepository);
 
@@ -94,6 +93,7 @@ public class BookingServiceTest {
         //expect
         assertThrows(AlreadyBookedException.class, () -> bookingService.book(user.getId(), session.getId(), "A1"));
         assertEquals(1, bookingRepository.count());
+
 
     }
 }
