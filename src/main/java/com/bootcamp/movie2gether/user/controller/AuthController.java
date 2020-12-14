@@ -14,20 +14,16 @@ import org.springframework.web.bind.annotation.RequestBody;
 //import org.springframework.security.config.annotation.web.configuration;
 import org.springframework.web.bind.annotation.RestController;
 
-//import static jdk.internal.net.http.AuthenticationFilter.encoder;
-
 @RestController
 public class AuthController {
     @Autowired
     UserRepository userRepository;
 
-//    @Autowired
-//    AuthenticationManager authenticationManager;
-//
-//    @Autowired
-//    PasswordEncoder passwordEncoder;
+    @Autowired
+    AuthenticationManager authenticationManager;
 
-
+    @Autowired
+    PasswordEncoder passwordEncoder;
 
     @PostMapping("/register")
     public ResponseEntity<?> registerUser(@RequestBody RegisterRequest registerRequest){
@@ -42,9 +38,9 @@ public class AuthController {
                     .body(new RegisterResponse());
         }
 
-//        User user = new User(registerRequest.getUserName(), registerRequest.getEmail(), encoder.encode(registerRequest.getPassword()));
-//
-//        userRepository.save(user);
+        User user = new User(registerRequest.getUserName(), registerRequest.getEmail(), passwordEncoder.encode(registerRequest.getPassword()));
+
+        userRepository.save(user);
         return ResponseEntity.ok(new RegisterResponse());
 
     }
