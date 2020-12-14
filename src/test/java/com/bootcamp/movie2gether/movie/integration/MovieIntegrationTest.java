@@ -2,6 +2,7 @@ package com.bootcamp.movie2gether.movie.integration;
 
 import com.bootcamp.movie2gether.movie.entity.Movie;
 import com.bootcamp.movie2gether.movie.repository.MovieRepository;
+import org.bson.types.ObjectId;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,6 +43,17 @@ public class MovieIntegrationTest {
         mockMvc.perform(get(apiBaseUrl + "/" + movie.getId()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.title").value("testMovieTitle"));
+        //then
+    }
+
+    @Test
+    @WithMockUser(value = "spring")
+    public void should_return_not_found_when_find_by_an_invalid_id_given_movies() throws Exception {
+        //given
+
+        //when
+        mockMvc.perform(get(apiBaseUrl + "/" + new ObjectId().toString()))
+                .andExpect(status().isNotFound());
         //then
     }
 }
