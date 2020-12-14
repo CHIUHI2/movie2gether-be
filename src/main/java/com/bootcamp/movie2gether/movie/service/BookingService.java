@@ -19,6 +19,7 @@ public class BookingService {
     }
 
     public Booking book(String userId, String sessionId, String seatNumber) {
-        return null;
+        Booking booking = new Booking(null, userId, seatNumber, sessionId);
+        return bookingRepository.save(booking);
     }
 }
