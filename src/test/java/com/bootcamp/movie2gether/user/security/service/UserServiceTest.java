@@ -1,4 +1,4 @@
-package com.bootcamp.movie2gether.user.service;
+package com.bootcamp.movie2gether.user.security.service;
 
 import com.bootcamp.movie2gether.user.repository.UserRepository;
 import org.junit.jupiter.api.extension.ExtendWith;
