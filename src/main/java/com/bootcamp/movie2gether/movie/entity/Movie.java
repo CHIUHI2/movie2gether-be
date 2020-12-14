@@ -7,7 +7,7 @@ import org.springframework.data.mongodb.core.mapping.MongoId;
 
 import java.time.ZonedDateTime;
 
-@Document(collation = "movies")
+@Document(collection = "movies")
 @Data
 public class Movie {
     @MongoId(FieldType.OBJECT_ID)
