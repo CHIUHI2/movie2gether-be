@@ -13,7 +13,7 @@ public class MovieDetailResponse {
     private Integer runtime;
     private String tagline;
     private String title;
-    private Float rateAverage;
+    private Float voteAverage;
     private String posterUrl;
     private Boolean onShow;
 }
