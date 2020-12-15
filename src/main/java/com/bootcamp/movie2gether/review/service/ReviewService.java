@@ -17,4 +17,9 @@ public class ReviewService {
         return reviewRepository.findByMovieIdAndUserId(new ObjectId(movieId),new ObjectId(userId));
     }
 
+    public Review save(Review review) {
+        return reviewRepository.save(review);
+    }
+
+
 }
