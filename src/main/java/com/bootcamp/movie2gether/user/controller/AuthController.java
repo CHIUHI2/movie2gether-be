@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/auth")
+@RequestMapping("/auth")
 public class AuthController {
     @Autowired
     UserRepository userRepository;
@@ -36,14 +36,14 @@ public class AuthController {
     JwtUtils jwtUtils;
 
     @PostMapping("/register")
-    public ResponseEntity<?> registerUser(@RequestBody RegisterRequest registerRequest){
-        if (userRepository.existsByUserName(registerRequest.getUserName())){
+    public ResponseEntity<?> registerUser(@RequestBody RegisterRequest registerRequest) {
+        if (userRepository.existsByUserName(registerRequest.getUserName())) {
             return ResponseEntity
                     .badRequest()
                     .body(new MessageResponse("This username has been used!"));
         }
 
-        if (userRepository.existsByEmail(registerRequest.getEmail())){
+        if (userRepository.existsByEmail(registerRequest.getEmail())) {
             return ResponseEntity
                     .badRequest()
                     .body(new MessageResponse("This email has been used!"));
@@ -70,6 +70,6 @@ public class AuthController {
                 userDetails.getId(),
                 userDetails.getUsername(),
                 userDetails.getEmail()
-                ));
+        ));
     }
 }
