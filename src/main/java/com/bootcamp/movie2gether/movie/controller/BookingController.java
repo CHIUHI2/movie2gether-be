@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 @Controller
 @RequestMapping("/bookings")
 @ResponseBody
+@CrossOrigin
 public class BookingController {
     @Autowired
     BookingService bookingService;

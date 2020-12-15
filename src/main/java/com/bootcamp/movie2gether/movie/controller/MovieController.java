@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/movies")
 @CrossOrigin
+@ResponseBody
 public class MovieController {
     @Autowired
     private MovieMapper movieMapper;
