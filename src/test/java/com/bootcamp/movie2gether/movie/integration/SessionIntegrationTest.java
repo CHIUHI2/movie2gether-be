@@ -104,8 +104,8 @@ public class SessionIntegrationTest {
                 .andExpect(jsonPath("$.content.[0].cinema.name").value("cinema"))
                 .andExpect(jsonPath("$.content.[0].cinema.seats", hasSize(10)))
                 .andExpect(jsonPath("$.content.[0].bookings", hasSize(1)))
-                .andExpect(jsonPath("$.content.[0].startTime", startsWith(startTime.format(DateTimeFormatter.ofPattern("uuuu-MM-dd'T'HH:mm:ss.SSS")))))
-                .andExpect(jsonPath("$.content.[0].endTime", startsWith(endTime.format(DateTimeFormatter.ofPattern("uuuu-MM-dd'T'HH:mm:ss.SSS")))))
+                .andExpect(jsonPath("$.content.[0].startTime", startsWith(startTime.format(DateTimeFormatter.ofPattern("uuuu-MM-dd'T'HH:mm:ss")))))
+                .andExpect(jsonPath("$.content.[0].endTime", startsWith(endTime.format(DateTimeFormatter.ofPattern("uuuu-MM-dd'T'HH:mm:ss")))))
         ;
     }
 
@@ -145,8 +145,8 @@ public class SessionIntegrationTest {
                 .andExpect(jsonPath("$.content.[0].cinema.name").value(cinemaA.getName()))
                 .andExpect(jsonPath("$.content.[0].cinema.seats", hasSize(10)))
                 .andExpect(jsonPath("$.content.[0].bookings", hasSize(0)))
-                .andExpect(jsonPath("$.content.[0].startTime", startsWith(startTime.format(DateTimeFormatter.ofPattern("uuuu-MM-dd'T'HH:mm:ss.SSS")))))
-                .andExpect(jsonPath("$.content.[0].endTime", startsWith(endTime.format(DateTimeFormatter.ofPattern("uuuu-MM-dd'T'HH:mm:ss.SSS")))))
+                .andExpect(jsonPath("$.content.[0].startTime", startsWith(startTime.format(DateTimeFormatter.ofPattern("uuuu-MM-dd'T'HH:mm:ss")))))
+                .andExpect(jsonPath("$.content.[0].endTime", startsWith(endTime.format(DateTimeFormatter.ofPattern("uuuu-MM-dd'T'HH:mm:ss")))))
         ;
 
     }

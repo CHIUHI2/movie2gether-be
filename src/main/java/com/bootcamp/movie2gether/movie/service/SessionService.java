@@ -13,6 +13,7 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -35,16 +36,17 @@ public class SessionService {
         List<AggregationOperation> aggregationOperations = new ArrayList<>();
         aggregationOperations.addAll(matchOperations);
         aggregationOperations.addAll(
-                List.of(
+                Arrays.asList(
                         lookup("cinema", "cinemaId", "_id", "cinema"),
-                        lookup("movie", "movieId", "_id", "movie"),
+                        lookup("movies", "movieId", "_id", "movie"),
                         lookup("booking", "_id", "sessionId", "bookings"),
-                        unwind("movie"),
-                        unwind("cinema"),
+                        unwind("$movie"),
+                        unwind("$cinema"),
                         sort(Sort.Direction.ASC, "startTime"),
                         skip((long) pageSize * page),
                         limit(pageSize)
                 )
+
         );
         Aggregation dataAggregation = Aggregation.newAggregation(aggregationOperations);
 
