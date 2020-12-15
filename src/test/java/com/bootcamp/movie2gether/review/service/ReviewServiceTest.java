@@ -2,7 +2,6 @@ package com.bootcamp.movie2gether.review.service;
 
 import com.bootcamp.movie2gether.review.entity.Review;
 import com.bootcamp.movie2gether.review.repository.ReviewRepository;
-import org.bson.types.ObjectId;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -11,7 +10,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.boot.test.context.SpringBootTest;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.verify;
@@ -52,5 +50,18 @@ public class ReviewServiceTest {
         //then
         final Review review = reviewArgumentCaptor.getValue();
         assertEquals(expected,review);
+    }
+
+    @Test
+    public void should_return_updated_review_when_update_given_valid_review_id() {
+        //given
+        final Review updatedReview = new Review();
+        when(reviewRepository.save(updatedReview)).thenReturn(updatedReview);
+
+        //when
+        final Review review = reviewService.update("5fd8d11c30fcb742001d2376",updatedReview);
+
+        //then
+        assertEquals(updatedReview, review);
     }
 }
