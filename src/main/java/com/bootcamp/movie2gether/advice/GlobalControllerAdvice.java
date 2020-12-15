@@ -1,6 +1,7 @@
 package com.bootcamp.movie2gether.advice;
 
 import com.bootcamp.movie2gether.movie.exception.AlreadyBookedException;
+import com.bootcamp.movie2gether.movie.exception.MovieNotFoundException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.BadCredentialsException;
