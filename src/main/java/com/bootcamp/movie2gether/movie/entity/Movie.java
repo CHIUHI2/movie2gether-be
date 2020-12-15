@@ -12,6 +12,7 @@ import org.springframework.data.mongodb.core.mapping.FieldType;
 import org.springframework.data.mongodb.core.mapping.MongoId;
 
 import java.time.ZonedDateTime;
+import java.util.List;
 
 @Document(collection = "movies")
 @Data
@@ -31,4 +32,5 @@ public class Movie {
     private Float voteAverage;
     private String posterUrl;
     private Boolean onShow;
+    private List<String> genres;
 }

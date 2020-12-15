@@ -3,6 +3,7 @@ package com.bootcamp.movie2gether.movie.dto;
 import lombok.Data;
 
 import java.time.ZonedDateTime;
+import java.util.List;
 
 @Data
 public class MovieDetailResponse {
@@ -16,4 +17,5 @@ public class MovieDetailResponse {
     private Float voteAverage;
     private String posterUrl;
     private Boolean onShow;
+    private List<String> genres;
 }
