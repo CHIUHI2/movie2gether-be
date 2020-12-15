@@ -1,5 +1,6 @@
 package com.bootcamp.movie2gether.movie.controller;
 
+import com.bootcamp.movie2gether.movie.dto.BookingDetailResponse;
 import com.bootcamp.movie2gether.movie.dto.BookingRequest;
 import com.bootcamp.movie2gether.movie.dto.BookingResponse;
 import com.bootcamp.movie2gether.movie.exception.AlreadyBookedException;
@@ -7,6 +8,7 @@ import com.bootcamp.movie2gether.movie.mapper.BookingMapper;
 import com.bootcamp.movie2gether.movie.service.BookingService;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -28,5 +30,13 @@ public class BookingController {
                         new ObjectId(bookingRequest.getSessionId()),
                         bookingRequest.getSeatNumber())
         );
+    }
+
+    @GetMapping
+    @ResponseStatus(HttpStatus.OK)
+    Page<BookingDetailResponse> getBookingDetails(@RequestParam Integer page,
+                                                  @RequestParam Integer pageSize,
+                                                  @RequestParam String userId) {
+        return bookingService.getPagedBookingDetailsByUserId(new ObjectId(userId), page, pageSize);
     }
 }

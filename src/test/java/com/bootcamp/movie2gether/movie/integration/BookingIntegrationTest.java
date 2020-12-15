@@ -17,6 +17,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.Duration;
@@ -34,6 +35,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
+@TestPropertySource(properties = "spring.autoconfigure.exclude=org.springframework.boot.autoconfigure.mongo.embedded.EmbeddedMongoAutoConfiguration")
 public class BookingIntegrationTest {
     @Autowired
     MockMvc mockMvc;
@@ -113,21 +115,21 @@ public class BookingIntegrationTest {
         //when
         //then
         mockMvc.perform(
-                get(String.format("/bookings&$page=0&pageSize=10&userId=%s", user.getId().toHexString()))
+                get(String.format("/bookings?page=0&pageSize=10&userId=%s", user.getId().toHexString()))
         )
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content", hasSize(1)))
                 .andExpect(jsonPath("$.content.[0].id").value(booking.getId().toHexString()))
                 .andExpect(jsonPath("$.content.[0].seatNumber").value(booking.getSeatNumber()))
                 .andExpect(jsonPath("$.content.[0].userId").value(user.getId().toHexString()))
-                .andExpect(jsonPath("$.content.[0].session.movie.id").value(movie.getId().toHexString()))
-                .andExpect(jsonPath("$.content.[0].session.movie.title").value(movie.getTitle()))
-                .andExpect(jsonPath("$.content.[0].session.cinema.id").value(cinema.getId().toHexString()))
-                .andExpect(jsonPath("$.content.[0].session.cinema.name").value(cinema.getName()))
-                .andExpect(jsonPath("$.content.[0].session.cinema.seats", hasSize(cinema.getSeats().size())))
-                .andExpect(jsonPath("$.content.[0].session.bookings", hasSize(1)))
-                .andExpect(jsonPath("$.content.[0].session.startTime", startsWith(startTime.format(DateTimeFormatter.ofPattern("uuuu-MM-dd'T'HH:mm:ss.SSS")))))
-                .andExpect(jsonPath("$.content.[0].session.endTime", startsWith(endTime.format(DateTimeFormatter.ofPattern("uuuu-MM-dd'T'HH:mm:ss.SSS")))))
+                .andExpect(jsonPath("$.content.[0].sessionDetail.movie.id").value(movie.getId().toHexString()))
+                .andExpect(jsonPath("$.content.[0].sessionDetail.movie.title").value(movie.getTitle()))
+                .andExpect(jsonPath("$.content.[0].sessionDetail.cinema.id").value(cinema.getId().toHexString()))
+                .andExpect(jsonPath("$.content.[0].sessionDetail.cinema.name").value(cinema.getName()))
+                .andExpect(jsonPath("$.content.[0].sessionDetail.cinema.seats", hasSize(cinema.getSeats().size())))
+                .andExpect(jsonPath("$.content.[0].sessionDetail.bookings", hasSize(1)))
+                .andExpect(jsonPath("$.content.[0].sessionDetail.startTime", startsWith(startTime.format(DateTimeFormatter.ofPattern("uuuu-MM-dd'T'HH:mm:ss.SSS")))))
+                .andExpect(jsonPath("$.content.[0].sessionDetail.endTime", startsWith(endTime.format(DateTimeFormatter.ofPattern("uuuu-MM-dd'T'HH:mm:ss.SSS")))))
         ;
     }
 
