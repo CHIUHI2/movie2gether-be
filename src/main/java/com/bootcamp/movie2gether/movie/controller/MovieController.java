@@ -12,7 +12,7 @@ import java.util.Collections;
 import java.util.List;
 
 @RestController
-@RequestMapping("/movies")
+@RequestMapping(value = "/movies")
 @CrossOrigin
 public class MovieController {
     @Autowired
@@ -24,35 +24,39 @@ public class MovieController {
     private static final String MOVIE_LISTING_MODE_ON_SHOW = "onShow";
     private static final String MOVIE_LISTING_MODE_COMING = "coming";
 
-//    @GetMapping
-//    public List<MovieListingResponse> getMovieListing(
-//            @RequestParam String mode,
-//            @RequestParam boolean isRecommend
-//    ) {
-//        if(mode.equals(MOVIE_LISTING_MODE_ON_SHOW)) {
-//            return movieMapper.toResponse(movieService.findOnShowMovies(isRecommend));
-//        }
-//        else if(mode.equals(MOVIE_LISTING_MODE_COMING)) {
-//            return movieMapper.toResponse(movieService.findComingSoonMovies(isRecommend));
-//        }
-//
-//        return Collections.emptyList();
-//    }
-//
-//    @GetMapping
-//    public List<MovieListingResponse> getMovieListingByGenre(
-//            @RequestParam String mode,
-//            @RequestParam String genre
-//    ) {
-//        if(mode.equals(MOVIE_LISTING_MODE_ON_SHOW)) {
-//            return movieMapper.toResponse(movieService.findOnShowMoviesByGenre(genre));
-//        }
-//        else if(mode.equals(MOVIE_LISTING_MODE_COMING)) {
-//            return movieMapper.toResponse(movieService.findComingSoonMoviesByGenre(genre));
-//        }
-//
-//        return Collections.emptyList();
-//    }
+    @GetMapping(params = {
+            "mode",
+            "isRecommend"
+    })
+    public List<MovieListingResponse> getMovieListing(
+            @RequestParam("mode") String mode,
+            @RequestParam("isRecommend") boolean isRecommend
+    ) {
+        if (mode.equals(MOVIE_LISTING_MODE_ON_SHOW)) {
+            return movieMapper.toResponse(movieService.findOnShowMovies(isRecommend));
+        } else if (mode.equals(MOVIE_LISTING_MODE_COMING)) {
+            return movieMapper.toResponse(movieService.findComingSoonMovies(isRecommend));
+        }
+
+        return Collections.emptyList();
+    }
+
+    @GetMapping(params = {
+            "mode",
+            "genre"
+    })
+    public List<MovieListingResponse> getMovieListingByGenre(
+            @RequestParam("mode") String mode,
+            @RequestParam("genre") String genre
+    ) {
+        if (mode.equals(MOVIE_LISTING_MODE_ON_SHOW)) {
+            return movieMapper.toResponse(movieService.findOnShowMoviesByGenre(genre));
+        } else if (mode.equals(MOVIE_LISTING_MODE_COMING)) {
+            return movieMapper.toResponse(movieService.findComingSoonMoviesByGenre(genre));
+        }
+
+        return Collections.emptyList();
+    }
 
     @GetMapping("/{id}")
     public MovieDetailResponse getMovieDetail(@PathVariable String id) throws MovieNotFoundException {
