@@ -1,7 +1,6 @@
 package com.bootcamp.movie2gether.movie.service;
 
 import com.bootcamp.movie2gether.movie.entity.Movie;
-import com.bootcamp.movie2gether.movie.exception.MovieNotFoundException;
 import com.bootcamp.movie2gether.movie.repository.MovieRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -10,13 +9,12 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import java.time.ZonedDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
@@ -34,8 +32,7 @@ public class MovieServiceTest {
         //given
         Movie expected = new Movie();
 
-        when(movieRepository.findById(anyString())).thenReturn(Optional.of(expected));
-        when(movieRepository.existsById(anyString())).thenReturn(true);
+        when(movieRepository.findById("0")).thenReturn(Optional.of(expected));
 
         //when
         Movie movie = movieService.findById("0");
@@ -45,25 +42,11 @@ public class MovieServiceTest {
     }
 
     @Test
-    public void should_throw_movie_not_found_exception_when_browse_with_a_non_existed_id_given_the_movie_detail_exists() {
-        //given
-        Movie expected = new Movie();
-
-        when(movieRepository.existsById(anyString())).thenReturn(false);
-
-        //when
-        MovieNotFoundException movieNotFoundException = assertThrows(MovieNotFoundException.class, () -> movieService.findById("1"));
-
-        //then
-        assertEquals("MOVIE NOT FOUND ERROR", movieNotFoundException.getMessage());
-    }
-
-    @Test
-    public void should_return_movie_when_find_comming_soon_movies_given_movies() {
+    public void should_return_movie_when_find_coming_soon_movies_given_movies() {
         //given
         List<Movie> expectedMovies = Collections.singletonList(new Movie());
 
-        when(movieRepository.findByReleaseDateNotGreaterThan(ZonedDateTime.now())).thenReturn(expectedMovies);
+        when(movieRepository.findByReleaseDateGreaterThan(any())).thenReturn(expectedMovies);
 
         //when
         List<Movie> returnedMovies = movieService.findComingSoonMovies(false);
@@ -77,7 +60,7 @@ public class MovieServiceTest {
         //given
         List<Movie> expectedMovies = Collections.singletonList(new Movie());
 
-        when(movieRepository.findByReleaseDateNotGreaterThan(ZonedDateTime.now())).thenReturn(expectedMovies);
+        when(movieRepository.findByReleaseDateNotGreaterThan(any())).thenReturn(expectedMovies);
 
         //when
         List<Movie> returnedMovies = movieService.findOnShowMovies(false);
@@ -87,14 +70,14 @@ public class MovieServiceTest {
     }
 
     @Test
-    public void should_return_movie_when_find_comming_soon_movies_by_genre_given_movies_genre() {
+    public void should_return_movie_when_find_coming_soon_movies_by_genre_given_movies_genre() {
         //given
         List<Movie> expectedMovies = Collections.singletonList(new Movie());
 
-        when(movieRepository.findByReleaseDateGreaterThanAndGenres(ZonedDateTime.now(), anyString())).thenReturn(expectedMovies);
+        when(movieRepository.findByReleaseDateGreaterThanAndGenres(any(), anyString())).thenReturn(expectedMovies);
 
         //when
-        List<Movie> returnedMovies = movieService.findComingSoonMoviesByGenre(anyString());
+        List<Movie> returnedMovies = movieService.findComingSoonMoviesByGenre("action");
 
         //then
         assertEquals(expectedMovies, returnedMovies);
@@ -105,10 +88,10 @@ public class MovieServiceTest {
         //given
         List<Movie> expectedMovies = Collections.singletonList(new Movie());
 
-        when(movieRepository.findByReleaseDateNotGreaterThanAndByGenres(ZonedDateTime.now(), anyString())).thenReturn(expectedMovies);
+        when(movieRepository.findByReleaseDateNotGreaterThanAndByGenres(any(), anyString())).thenReturn(expectedMovies);
 
         //when
-        List<Movie> returnedMovies = movieService.findOnShowMoviesByGenre(anyString());
+        List<Movie> returnedMovies = movieService.findOnShowMoviesByGenre("action");
 
         //then
         assertEquals(expectedMovies, returnedMovies);

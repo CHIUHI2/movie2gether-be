@@ -45,9 +45,9 @@ public class MovieIntegrationTest {
 
         //when
         //then
-        mockMvc.perform(get(apiBaseUrl + "/" + movie.getId()))
+        mockMvc.perform(get(apiBaseUrl + "/" + movie.getId().toString()))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(movie.getId()))
+                .andExpect(jsonPath("$.id").value(movie.getId().toString()))
                 .andExpect(jsonPath("$.title").value("testMovieTitle"));
     }
 
@@ -86,8 +86,8 @@ public class MovieIntegrationTest {
                         .param("mode", "onShow")
                         .param("isRecommend", "false"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].id").value(movieOnShow1.getId()))
-                .andExpect(jsonPath("$[1].id").value(movieOnShow2.getId()));
+                .andExpect(jsonPath("$[0].id").value(movieOnShow1.getId().toString()))
+                .andExpect(jsonPath("$[1].id").value(movieOnShow2.getId().toString()));
     }
 
     @Test
@@ -117,8 +117,8 @@ public class MovieIntegrationTest {
                 .param("mode", "onShow")
                 .param("isRecommend", "true"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].id").value(movieOnShow2.getId()))
-                .andExpect(jsonPath("$[1].id").value(movieOnShow1.getId()));
+                .andExpect(jsonPath("$[0].id").value(movieOnShow2.getId().toString()))
+                .andExpect(jsonPath("$[1].id").value(movieOnShow1.getId().toString()));
     }
 
     @Test
@@ -146,7 +146,7 @@ public class MovieIntegrationTest {
                 .param("mode", "coming")
                 .param("isRecommend", "false"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].id").value(movieComingSoon.getId()));
+                .andExpect(jsonPath("$[0].id").value(movieComingSoon.getId().toString()));
     }
 
     @Test
@@ -174,10 +174,10 @@ public class MovieIntegrationTest {
         //then
         mockMvc.perform(get(apiBaseUrl)
                 .param("mode", "coming")
-                .param("isRecommend", "false"))
+                .param("isRecommend", "true"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].id").value(movieComingSoon2.getId()))
-                .andExpect(jsonPath("$[1].id").value(movieComingSoon1.getId()));
+                .andExpect(jsonPath("$[0].id").value(movieComingSoon2.getId().toString()))
+                .andExpect(jsonPath("$[1].id").value(movieComingSoon1.getId().toString()));
     }
 
     @Test
@@ -193,13 +193,13 @@ public class MovieIntegrationTest {
         Movie movieOnShow2 = new Movie();
         movieOnShow2.setTitle("movieOnShow2");
         movieOnShow2.setReleaseDate(ZonedDateTime.now());
-        movieOnShow1.setGenres(Collections.singletonList("comedy"));
+        movieOnShow2.setGenres(Collections.singletonList("comedy"));
         movieRepository.insert(movieOnShow2);
 
         Movie movieComingSoon = new Movie();
         movieComingSoon.setTitle("movieComingSoon");
         movieComingSoon.setReleaseDate(ZonedDateTime.now().plusDays(1));
-        movieOnShow1.setGenres(Collections.singletonList("action"));
+        movieComingSoon.setGenres(Collections.singletonList("action"));
         movieRepository.insert(movieComingSoon);
 
         //when
@@ -208,7 +208,7 @@ public class MovieIntegrationTest {
                 .param("mode", "onShow")
                 .param("genre", "action"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].id").value(movieOnShow1.getId()));
+                .andExpect(jsonPath("$[0].id").value(movieOnShow1.getId().toString()));
     }
 
     @Test
@@ -224,13 +224,13 @@ public class MovieIntegrationTest {
         Movie movieOnShow2 = new Movie();
         movieOnShow2.setTitle("movieOnShow2");
         movieOnShow2.setReleaseDate(ZonedDateTime.now());
-        movieOnShow1.setGenres(Collections.singletonList("comedy"));
+        movieOnShow2.setGenres(Collections.singletonList("comedy"));
         movieRepository.insert(movieOnShow2);
 
         Movie movieComingSoon = new Movie();
         movieComingSoon.setTitle("movieComingSoon");
         movieComingSoon.setReleaseDate(ZonedDateTime.now().plusDays(1));
-        movieOnShow1.setGenres(Collections.singletonList("action"));
+        movieComingSoon.setGenres(Collections.singletonList("action"));
         movieRepository.insert(movieComingSoon);
 
         //when
@@ -239,6 +239,6 @@ public class MovieIntegrationTest {
                 .param("mode", "coming")
                 .param("genre", "action"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].id").value(movieComingSoon.getId()));
+                .andExpect(jsonPath("$[0].id").value(movieComingSoon.getId().toString()));
     }
 }
