@@ -21,9 +21,9 @@ public class SessionController {
     @GetMapping()
     List<SessionDetail> getSessionOverviews(@RequestParam Integer page,
                                             @RequestParam Integer pageSize,
-                                            @RequestParam(required = false) ObjectId movieId,
-                                            @RequestParam(required = false) ObjectId cinemaId) {
-        return sessionService.getDetailsPaged(page, pageSize, cinemaId, movieId);
+                                            @RequestParam(required = false) String movieId,
+                                            @RequestParam(required = false) String cinemaId) {
+        return sessionService.getDetailsPaged(page, pageSize, cinemaId == null ? null : new ObjectId(cinemaId), movieId == null ? null : new ObjectId(movieId));
     }
 
 }
