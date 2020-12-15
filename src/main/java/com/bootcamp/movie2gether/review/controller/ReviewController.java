@@ -1,12 +1,10 @@
 package com.bootcamp.movie2gether.review.controller;
 
+import com.bootcamp.movie2gether.review.dto.ReviewResponse;
 import com.bootcamp.movie2gether.review.mapper.ReviewMapper;
 import com.bootcamp.movie2gether.review.service.ReviewService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/reviews")
@@ -17,5 +15,10 @@ public class ReviewController {
 
     @Autowired
     private ReviewService reviewService;
+
+    @GetMapping(params={"movieId","userId"})
+    public ReviewResponse getByMovieIdAndUserId(@RequestParam String movieId, @RequestParam String userId){
+        return reviewMapper.toResponse(reviewService.getByMovieIdAndUserId(movieId,userId));
+    }
 
 }
