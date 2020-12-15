@@ -10,6 +10,7 @@ public class MovieMapper {
     public MovieDetailResponse toResponse(Movie movie) {
         MovieDetailResponse movieDetailResponse = new MovieDetailResponse();
         BeanUtils.copyProperties(movie, movieDetailResponse);
+        movieDetailResponse.setId(movie.getId().toString());
         return movieDetailResponse;
     }
 }
