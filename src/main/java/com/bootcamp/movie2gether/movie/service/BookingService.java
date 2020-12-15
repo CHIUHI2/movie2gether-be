@@ -17,7 +17,6 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -48,21 +47,20 @@ public class BookingService {
     }
 
     public Page<BookingDetailResponse> getPagedBookingDetailsByUserId(ObjectId userId, Integer page, Integer pageSize) {
-
         Pageable pageable = PageRequest.of(page, pageSize);
-        List<AggregationOperation> aggregationOperations = new ArrayList<>(Arrays.asList(
-                match(Criteria.where("userId").is(userId)),
-                lookup("session", "sessionId", "_id", "sessionDetail"),
-                unwind("sessionDetail"),
-                lookup("cinema", "sessionDetail.cinemaId", "_id", "sessionDetail.cinema"),
-                lookup("movie", "sessionDetail.movieId", "_id", "sessionDetail.movie"),
-                lookup("booking", "sessionDetail._id", "sessionId", "sessionDetail.bookings"),
-                unwind("sessionDetail.movie"),
-                unwind("sessionDetail.cinema"),
-                sort(Sort.Direction.ASC, "sessionDetail.startTime"),
-                skip((long) pageSize * page),
-                limit(pageSize)
-        ));
+        List<AggregationOperation> aggregationOperations =
+                Arrays.asList(match(Criteria.where("userId").is(userId)),
+                        lookup("session", "sessionId", "_id", "sessionDetail"),
+                        unwind("$sessionDetail"),
+                        lookup("cinema", "sessionDetail.cinemaId", "_id", "sessionDetail.cinema"),
+                        lookup("movies", "sessionDetail.movieId", "_id", "sessionDetail.movie"),
+                        lookup("booking", "sessionDetail._id", "sessionId", "sessionDetail.bookings"),
+                        unwind("$sessionDetail.cinema"),
+                        unwind("$sessionDetail.movie"),
+                        sort(Sort.Direction.ASC, "sessionDetail.startTime"),
+                        skip((long) pageSize * page),
+                        limit(pageSize)
+                );
         Aggregation dataAggregation = Aggregation.newAggregation(aggregationOperations);
 
         Query query = new Query();
