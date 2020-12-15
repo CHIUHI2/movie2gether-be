@@ -26,7 +26,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 public class CinemaIntegrationTest {
-    public static final String CINEMA_PATH = "/cinemas";
+    public static final String BOOKINGS_PATH = "/cinemas";
     @Autowired
     MockMvc mockMvc;
     @Autowired
@@ -74,13 +74,13 @@ public class CinemaIntegrationTest {
                         .build()
         );
         //when
-        mockMvc.perform(get(String.format("%s?page=%d&pageSize=%d", CINEMA_PATH, 1, 1)))
-                .andExpect(status().isCreated())
+        mockMvc.perform(get(String.format("%s?page=%d&pageSize=%d", BOOKINGS_PATH, 1, 1)))
+                .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content", hasSize(1)))
                 .andExpect(jsonPath("$.content[0].id").value(cinema2.getId().toHexString()))
                 .andExpect(jsonPath("$.content[0].name").value(cinema2.getName()))
                 .andExpect(jsonPath("$.content[0].seats", hasSize(10)))
-                .andExpect(jsonPath("$.numberOfElements").value(2))
+                .andExpect(jsonPath("$.totalElements").value(2))
         ;
         //then
     }
