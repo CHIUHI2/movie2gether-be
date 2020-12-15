@@ -132,7 +132,7 @@ public class BookingIntegrationTest {
         //when
         //then
         mockMvc.perform(
-                get(String.format("/sessions?page=0&pageSize=2&movieId=%s&cinemaId=%s",
+                get(String.format("/sessions?page=0&pageSize=1&movieId=%s&cinemaId=%s",
                         movie2.getId().toHexString(),
                         cinemaA.getId().toHexString())))
                 .andExpect(jsonPath("$", hasSize(1)))
@@ -142,7 +142,7 @@ public class BookingIntegrationTest {
                 .andExpect(jsonPath("$.[0].cinema.id").value(cinemaA.getId().toHexString()))
                 .andExpect(jsonPath("$.[0].cinema.name").value(cinemaA.getName()))
                 .andExpect(jsonPath("$.[0].cinema.seats", hasSize(10)))
-                .andExpect(jsonPath("$.[0].bookings", hasSize(1)))
+                .andExpect(jsonPath("$.[0].bookings", hasSize(0)))
                 .andExpect(jsonPath("$.[0].startTime").value(startTime.format(DateTimeFormatter.ofPattern("uuuu-MM-dd'T'HH:mm:ss.SSS"))))
                 .andExpect(jsonPath("$.[0].endTime").value(endTime.format(DateTimeFormatter.ofPattern("uuuu-MM-dd'T'HH:mm:ss.SSS"))))
         ;
