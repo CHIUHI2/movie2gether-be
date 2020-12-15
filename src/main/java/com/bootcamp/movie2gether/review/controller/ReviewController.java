@@ -33,4 +33,9 @@ public class ReviewController {
         return reviewMapper.toResponse(reviewService.save(reviewMapper.toEntity(reviewRequest)));
     }
 
+    @PutMapping("/{reviewId}")
+    public ReviewResponse update(@PathVariable String reviewId, @RequestBody ReviewRequest reviewRequest){
+        return reviewMapper.toResponse(reviewService.update(reviewId, reviewMapper.toEntity(reviewRequest)));
+    }
+
 }
