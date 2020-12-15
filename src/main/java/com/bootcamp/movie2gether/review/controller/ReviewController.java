@@ -27,4 +27,10 @@ public class ReviewController {
         return reviewMapper.toResponse(reviewService.getByMovieIdAndUserId(movieId,userId));
     }
 
+    @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
+    public ReviewResponse save(@RequestBody ReviewRequest reviewRequest){
+        return reviewMapper.toResponse(reviewService.save(reviewMapper.toEntity(reviewRequest)));
+    }
+
 }
