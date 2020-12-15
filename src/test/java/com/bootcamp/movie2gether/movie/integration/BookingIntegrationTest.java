@@ -65,7 +65,7 @@ public class BookingIntegrationTest {
     }
 
     @Test
-    @WithMockUser(value = "spring")
+//    @WithMockUser(value = "spring")
     void should_get_paged_session_details_when_get_sessions_given_20_movie_sessions() throws Exception {
         //given
         Movie movie = movieRepository.save(Movie.builder().onShow(true).title("Interstellar").build());
@@ -98,16 +98,16 @@ public class BookingIntegrationTest {
         //then
         mockMvc.perform(get("/sessions?page=0&pageSize=1"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(1)))
-                .andExpect(jsonPath("$.[0].id").isString())
-                .andExpect(jsonPath("$.[0].movie.id").value(movie.getId().toHexString()))
-                .andExpect(jsonPath("$.[0].movie.title").value("Interstellar"))
-                .andExpect(jsonPath("$.[0].cinema.id").value(cinema.getId().toHexString()))
-                .andExpect(jsonPath("$.[0].cinema.name").value("cinema"))
-                .andExpect(jsonPath("$.[0].cinema.seats", hasSize(10)))
-                .andExpect(jsonPath("$.[0].bookings", hasSize(1)))
-                .andExpect(jsonPath("$.[0].startTime").value(startTime.format(DateTimeFormatter.ofPattern("uuuu-MM-dd'T'HH:mm:ss.SSS"))))
-                .andExpect(jsonPath("$.[0].endTime").value(endTime.format(DateTimeFormatter.ofPattern("uuuu-MM-dd'T'HH:mm:ss.SSS"))))
+                .andExpect(jsonPath("$.content", hasSize(1)))
+                .andExpect(jsonPath("$.content.[0].id").isString())
+                .andExpect(jsonPath("$.content.[0].movie.id").value(movie.getId().toHexString()))
+                .andExpect(jsonPath("$.content.[0].movie.title").value("Interstellar"))
+                .andExpect(jsonPath("$.content.[0].cinema.id").value(cinema.getId().toHexString()))
+                .andExpect(jsonPath("$.content.[0].cinema.name").value("cinema"))
+                .andExpect(jsonPath("$.content.[0].cinema.seats", hasSize(10)))
+                .andExpect(jsonPath("$.content.[0].bookings", hasSize(1)))
+                .andExpect(jsonPath("$.content.[0].startTime").value(startTime.format(DateTimeFormatter.ofPattern("uuuu-MM-dd'T'HH:mm:ss.SSS"))))
+                .andExpect(jsonPath("$.content.[0].endTime").value(endTime.format(DateTimeFormatter.ofPattern("uuuu-MM-dd'T'HH:mm:ss.SSS"))))
         ;
     }
 

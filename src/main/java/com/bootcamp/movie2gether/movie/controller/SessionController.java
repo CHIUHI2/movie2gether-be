@@ -5,9 +5,8 @@ import com.bootcamp.movie2gether.movie.mapper.SessionMapper;
 import com.bootcamp.movie2gether.movie.service.SessionService;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/sessions")
@@ -19,7 +18,7 @@ public class SessionController {
     SessionMapper sessionMapper;
 
     @GetMapping()
-    List<SessionDetail> getSessionOverviews(@RequestParam Integer page,
+    Page<SessionDetail> getSessionOverviews(@RequestParam Integer page,
                                             @RequestParam Integer pageSize,
                                             @RequestParam(required = false) String movieId,
                                             @RequestParam(required = false) String cinemaId) {
