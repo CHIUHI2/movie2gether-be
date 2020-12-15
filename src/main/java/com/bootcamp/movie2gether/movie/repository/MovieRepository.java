@@ -15,7 +15,7 @@ public interface MovieRepository extends MongoRepository<Movie, String> {
     @Query("{'releaseDate' : {$lte : ?0}}")
     List<Movie> findByReleaseDateNotGreaterThan(ZonedDateTime releaseDate);
     List<Movie> findByReleaseDateGreaterThanAndGenres(ZonedDateTime releaseDate, String genre);
-    @Query("{$and:[{'releaseDate' : {$lte : ?0}}, { 'genres': {$in : ?1 }}]}")
+    @Query("{$and:[{'releaseDate' : {$lte : ?0}}, { 'genres': { $in : [?1] }}]}")
     List<Movie> findByReleaseDateNotGreaterThanAndByGenres(ZonedDateTime releaseDate, String genre);
 }
 
