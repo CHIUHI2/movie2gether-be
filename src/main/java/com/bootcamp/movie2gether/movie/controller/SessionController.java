@@ -18,8 +18,11 @@ public class SessionController {
     @Autowired
     SessionMapper sessionMapper;
 
-    @GetMapping(params = {"page", "pageSize", "movieId", "cinemaId"})
-    List<SessionDetail> getSessionOverviews(@RequestParam Integer page, @RequestParam Integer pageSize, @RequestParam ObjectId movieId, @RequestParam ObjectId cinemaId) {
+    @GetMapping()
+    List<SessionDetail> getSessionOverviews(@RequestParam Integer page,
+                                            @RequestParam Integer pageSize,
+                                            @RequestParam(required = false) ObjectId movieId,
+                                            @RequestParam(required = false) ObjectId cinemaId) {
         return sessionService.getDetailsPaged(page, pageSize, cinemaId, movieId);
     }
 
