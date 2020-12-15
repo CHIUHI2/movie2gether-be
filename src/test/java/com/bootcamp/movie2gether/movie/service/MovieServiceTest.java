@@ -10,6 +10,9 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.time.ZonedDateTime;
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -53,5 +56,61 @@ public class MovieServiceTest {
 
         //then
         assertEquals("MOVIE NOT FOUND ERROR", movieNotFoundException.getMessage());
+    }
+
+    @Test
+    public void should_return_movie_when_find_comming_soon_movies_given_movies() {
+        //given
+        List<Movie> expectedMovies = Collections.singletonList(new Movie());
+
+        when(movieRepository.findByReleaseDateNotGreaterThan(ZonedDateTime.now())).thenReturn(expectedMovies);
+
+        //when
+        List<Movie> returnedMovies = movieService.findCommingSoonMovies(false);
+
+        //then
+        assertEquals(expectedMovies, returnedMovies);
+    }
+
+    @Test
+    public void should_return_movie_when_find_on_show_movies_given_movies() {
+        //given
+        List<Movie> expectedMovies = Collections.singletonList(new Movie());
+
+        when(movieRepository.findByReleaseDateNotGreaterThan(ZonedDateTime.now())).thenReturn(expectedMovies);
+
+        //when
+        List<Movie> returnedMovies = movieService.findOnShowMovies(false);
+
+        //then
+        assertEquals(expectedMovies, returnedMovies);
+    }
+
+    @Test
+    public void should_return_movie_when_find_comming_soon_movies_by_genre_given_movies_genre() {
+        //given
+        List<Movie> expectedMovies = Collections.singletonList(new Movie());
+
+        when(movieRepository.findByReleaseDateGreaterThanAndGenres(ZonedDateTime.now(), anyString())).thenReturn(expectedMovies);
+
+        //when
+        List<Movie> returnedMovies = movieService.findCommingSoonMoviesByGenre(anyString());
+
+        //then
+        assertEquals(expectedMovies, returnedMovies);
+    }
+
+    @Test
+    public void should_return_movie_when_find_on_show_movies_by_genre_given_movies_genre() {
+        //given
+        List<Movie> expectedMovies = Collections.singletonList(new Movie());
+
+        when(movieRepository.findByReleaseDateNotGreaterThanAndGenres(ZonedDateTime.now(), anyString())).thenReturn(expectedMovies);
+
+        //when
+        List<Movie> returnedMovies = movieService.findOnShowMoviesByGenre(anyString());
+
+        //then
+        assertEquals(expectedMovies, returnedMovies);
     }
 }
