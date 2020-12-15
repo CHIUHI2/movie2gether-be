@@ -9,7 +9,6 @@ import java.util.Collection;
 import java.util.Objects;
 
 public class UserDetailsImpl implements UserDetails {
-    private static final long serialVersionUID = 1L;
 
     private String id;
 

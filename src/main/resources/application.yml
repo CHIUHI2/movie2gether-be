@@ -2,6 +2,8 @@ spring:
   data:
     mongodb:
       uri : ${MONGO_DB_PATH}
+      auto-index-creation: true
+
 management:
   endpoint:
     health:

@@ -3,6 +3,7 @@ package com.bootcamp.movie2gether.advice;
 import com.bootcamp.movie2gether.movie.exception.AlreadyBookedException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -26,6 +27,9 @@ public class GlobalControllerAdvice {
     public ErrorResponse handleBookDuplication(AlreadyBookedException exception) {
         return new ErrorResponse(HttpStatus.CONFLICT.name(), exception.getMessage());
     }
-
-
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    @ExceptionHandler({BadCredentialsException.class})
+    public ErrorResponse handleBadCredentialException(Exception exception) {
+        return new ErrorResponse(HttpStatus.UNAUTHORIZED.name(), exception.getMessage());
+    }
 }
