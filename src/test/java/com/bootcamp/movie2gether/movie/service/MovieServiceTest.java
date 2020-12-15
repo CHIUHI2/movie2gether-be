@@ -66,7 +66,7 @@ public class MovieServiceTest {
         when(movieRepository.findByReleaseDateNotGreaterThan(ZonedDateTime.now())).thenReturn(expectedMovies);
 
         //when
-        List<Movie> returnedMovies = movieService.findCommingSoonMovies(false);
+        List<Movie> returnedMovies = movieService.findComingSoonMovies(false);
 
         //then
         assertEquals(expectedMovies, returnedMovies);
@@ -94,7 +94,7 @@ public class MovieServiceTest {
         when(movieRepository.findByReleaseDateGreaterThanAndGenres(ZonedDateTime.now(), anyString())).thenReturn(expectedMovies);
 
         //when
-        List<Movie> returnedMovies = movieService.findCommingSoonMoviesByGenre(anyString());
+        List<Movie> returnedMovies = movieService.findComingSoonMoviesByGenre(anyString());
 
         //then
         assertEquals(expectedMovies, returnedMovies);
@@ -105,7 +105,7 @@ public class MovieServiceTest {
         //given
         List<Movie> expectedMovies = Collections.singletonList(new Movie());
 
-        when(movieRepository.findByReleaseDateNotGreaterThanAndGenres(ZonedDateTime.now(), anyString())).thenReturn(expectedMovies);
+        when(movieRepository.findByReleaseDateNotGreaterThanAndByGenres(ZonedDateTime.now(), anyString())).thenReturn(expectedMovies);
 
         //when
         List<Movie> returnedMovies = movieService.findOnShowMoviesByGenre(anyString());

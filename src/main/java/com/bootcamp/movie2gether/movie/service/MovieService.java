@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 import java.time.ZonedDateTime;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -21,7 +20,11 @@ public class MovieService {
         return movieRepository.findById(id).orElseThrow(MovieNotFoundException::new);
     }
 
-    public List<Movie> findCommingSoonMovies(boolean isRecommend) {
+    public List<Movie> test() {
+        return this.movieRepository.findByReleaseDate(ZonedDateTime.now());
+    }
+
+    public List<Movie> findComingSoonMovies(boolean isRecommend) {
         List<Movie> movies = movieRepository.findByReleaseDateGreaterThan(ZonedDateTime.now());
 
         if(isRecommend) {
@@ -47,11 +50,11 @@ public class MovieService {
         return movies;
     }
 
-    public List<Movie> findCommingSoonMoviesByGenre(String genre) {
+    public List<Movie> findComingSoonMoviesByGenre(String genre) {
         return movieRepository.findByReleaseDateGreaterThanAndGenres(ZonedDateTime.now(), genre);
     }
 
     public List<Movie> findOnShowMoviesByGenre(String genre) {
-        return movieRepository.findByReleaseDateNotGreaterThanAndGenres(ZonedDateTime.now(), genre);
+        return movieRepository.findByReleaseDateNotGreaterThanAndByGenres(ZonedDateTime.now(), genre);
     }
 }
