@@ -12,22 +12,19 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.LocalDateTime;
 
-@Document(collection = "movies")
+@Document
 @Data
-@Builder
-@NoArgsConstructor
 @AllArgsConstructor
-public class Movie {
+@NoArgsConstructor
+@Builder
+public class Session {
     @Id
     @JsonSerialize(using = ToStringSerializer.class)
     private ObjectId id;
-    private String overview;
-    private Float popularity;
-    private LocalDateTime releaseDate;
-    private Integer runtime;
-    private String tagline;
-    private String title;
-    private Float rateAverage;
-    private String posterUrl;
-    private Boolean onShow;
+    @JsonSerialize(using = ToStringSerializer.class)
+    private ObjectId cinemaId;
+    @JsonSerialize(using = ToStringSerializer.class)
+    private ObjectId movieId;
+    private LocalDateTime startTime;
+    private LocalDateTime endTime;
 }

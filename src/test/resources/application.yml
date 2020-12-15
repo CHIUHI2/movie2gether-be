@@ -1,8 +1,9 @@
 spring:
   data:
     mongodb:
-      uri: mongodb://localhost:27017/movie2gether
+      uri : ${MONGO_DB_PATH}
+      auto-index-creation: true
 
 # App Properties
-bezkoder.app.jwtSecret: bezKoderSecretKey
+bezkoder.app.jwtSecret: ${bezKoderSecretKey}
 bezkoder.app.jwtExpirationMs: 86400000

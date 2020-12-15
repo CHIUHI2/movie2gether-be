@@ -20,6 +20,8 @@ tags:
     description: User information.
   - name: Booking
     description: Booking and Payment API.
+  - name: Session
+    description: Movie session detail.
   - name: Static
     description: Static files.
 paths:
@@ -27,6 +29,28 @@ paths:
     get:
       tags:
         - "Movie"
+      parameters:
+        - in: query
+          name: pageSize
+          required: true
+          schema:
+            type: integer
+        - in: query
+          name: page
+          required: true
+          schema:
+            type: integer
+        - in: query
+          name: sortBy
+          schema:
+            type: string
+            enum: ['recommanded', 'top']
+            default: 'recommanded'
+        - in: query
+          name: sortOrder
+          schema:
+            type: string
+            enum: [asc, desc]
       responses:
         200:
           description: "successful operation"
@@ -44,6 +68,17 @@ paths:
         schema:
           type: string
     get:
+      parameters:
+        - in: query
+          name: pageSize
+          required: true
+          schema:
+            type: integer
+        - in: query
+          name: page
+          required: true
+          schema:
+            type: integer
       tags:
         - "Movie"
       responses:
@@ -52,20 +87,88 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/MovieComments'
-
-externalDocs:
-  description: Find out more about Swagger
-  url: 'http://swagger.io'
+                type: array
+                items:
+                  type: object
+                  properties:
+                    author:
+                      type: string
+                    content:
+                      type: string
+                    rating:
+                      type: integer
+  /session:
+    get:
+      description: 'Query for movie sessions'
+      parameters:
+        - in: query
+          name: pageSize
+          required: true
+          schema:
+            type: integer
+        - in: query
+          name: page
+          required: true
+          schema:
+            type: integer
+        - in: query
+          name: movieId
+          schema:
+            type: string
+        - in: query
+          name: cinemaId
+          schema:
+            type: string
+      tags:
+        - "Session"
+      responses:
+        200:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SessionOverview'
+  /session/{id}:
+    get:
+      description: 'Movie session details'
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      tags:
+        - "Session"
+      responses:
+        200:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SessionDetail'
 components:
   schemas:
     User:
       type: object
       properties:
+        id:
+          type: string
         username:
+          type: string
+        firstName:
+          type: string
+        lastName:
           type: string
         password:
           type: string
+        preference:
+          type: array
+          items:
+            type: string
         friends:
           type: array
           items:
@@ -77,6 +180,8 @@ components:
     Movie:
       type: object
       properties:
+        id:
+          type: string
         name:
           type: string
         category:
@@ -85,13 +190,15 @@ components:
             type: string
         rating:
           type: number
-    MovieComments:
-      type: array
-      items:
-        $ref: '#/components/schemas/Comment'
+        posterUri:
+          type: string
+        description:
+          type: string
     Comment:
       type: object
       properties:
+        id:
+          type: string
         author:
           type: string
         content:
@@ -101,23 +208,58 @@ components:
     Booking:
       type: object
       properties:
+        id:
+          type: string
         userId:
           type: string
         sessionId:
           type: string
         seatId:
           type: string
-    Session:
+    SessionOverview:
       type: object
       properties:
-        movie:
-          $ref: '#/components/schemas/Movie'
+        id:
+          type: string
         startTime:
           type: string
           format: date-time
         endTime:
           type: string
           format: date-time
+        movieId:
+          type: string
+        movieName:
+          type: string
+        cinemaId:
+          type: string
+        cinemaName:
+          type: string
+        theaterId:
+          type: string
+        theaterName:
+          type: string
+        totalSeats:
+          type: integer
+        avilableSeats:
+          type: integer
+    SessionDetail:
+      type: object
+      properties:
+        id:
+          type: string
+        startTime:
+          type: string
+          format: date-time
+        endTime:
+          type: string
+          format: date-time
+        movie:
+          $ref: '#/components/schemas/Movie'
+        cinema:
+          $ref: '#/components/schemas/Cinema'
+        theater:
+          $ref: '#/components/schemas/Theater'
         bookings:
           type: array
           items:
@@ -125,7 +267,20 @@ components:
     Cinema:
       type: object
       properties:
+        id:
+          type: string
         address:
+          type: string
+        name:
+          type: string
+        theaters:
+          type: array
+          items:
+            $ref: '#/components/schemas/Theater'
+    Theater:
+      type: object
+      properties:
+        id:
           type: string
         name:
           type: string
@@ -135,9 +290,11 @@ components:
             $ref: '#/components/schemas/Seat'
     Seat:
       type: object
+      description: "Represent one seat in the theater"
       properties:
         number:
           type: string
+          description: 'Seat number, e.g. "G11" to identify seat inside a cinema'
         x:
           type: number
           description: "lateral distance from screen"

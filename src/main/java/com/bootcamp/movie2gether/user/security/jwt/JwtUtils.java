@@ -1,15 +1,14 @@
 package com.bootcamp.movie2gether.user.security.jwt;
 
-import java.util.Date;
-
 import com.bootcamp.movie2gether.user.security.service.UserDetailsImpl;
+import io.jsonwebtoken.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 
-import io.jsonwebtoken.*;
+import java.util.Date;
 
 @Component
 public class JwtUtils {
@@ -28,9 +27,13 @@ public class JwtUtils {
         return Jwts.builder()
                 .setSubject((userPrincipal.getUsername()))
                 .setIssuedAt(new Date())
-                .setExpiration(new Date((new Date()).getTime() + jwtExpirationMs))
+                .setExpiration(generateExpirationDate())
                 .signWith(SignatureAlgorithm.HS512, jwtSecret)
                 .compact();
+    }
+
+    private Date generateExpirationDate() {
+        return new Date((new Date()).getTime() + jwtExpirationMs);
     }
 
     public String getUserNameFromJwtToken(String token) {

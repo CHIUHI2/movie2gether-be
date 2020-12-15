@@ -2,11 +2,13 @@ spring:
   data:
     mongodb:
       uri : ${MONGO_DB_PATH}
+      auto-index-creation: true
+
 management:
   endpoint:
     health:
       show-components: 'always'
 
 # App Properties
-bezkoder.app.jwtSecret: bezKoderSecretKey
+bezkoder.app.jwtSecret: ${bezKoderSecretKey}
 bezkoder.app.jwtExpirationMs: 86400000

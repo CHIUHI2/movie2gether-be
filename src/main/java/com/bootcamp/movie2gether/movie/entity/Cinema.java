@@ -10,24 +10,18 @@ import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.time.LocalDateTime;
+import java.util.List;
 
-@Document(collection = "movies")
+@Document
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Movie {
+public class Cinema {
     @Id
     @JsonSerialize(using = ToStringSerializer.class)
     private ObjectId id;
-    private String overview;
-    private Float popularity;
-    private LocalDateTime releaseDate;
-    private Integer runtime;
-    private String tagline;
-    private String title;
-    private Float rateAverage;
-    private String posterUrl;
-    private Boolean onShow;
+    private String address;
+    private String name;
+    private List<Seat> seats;
 }

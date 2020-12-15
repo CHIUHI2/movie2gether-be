@@ -1,18 +1,27 @@
 package com.bootcamp.movie2gether.user.controller;
 
+import com.bootcamp.movie2gether.user.dto.JwtResponse;
+import com.bootcamp.movie2gether.user.dto.LoginRequest;
 import com.bootcamp.movie2gether.user.dto.MessageResponse;
 import com.bootcamp.movie2gether.user.dto.RegisterRequest;
 import com.bootcamp.movie2gether.user.entity.User;
 import com.bootcamp.movie2gether.user.repository.UserRepository;
+import com.bootcamp.movie2gether.user.security.jwt.JwtUtils;
+import com.bootcamp.movie2gether.user.security.service.UserDetailsImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
+@RequestMapping("/auth")
 public class AuthController {
     @Autowired
     UserRepository userRepository;
@@ -23,15 +32,18 @@ public class AuthController {
     @Autowired
     PasswordEncoder passwordEncoder;
 
+    @Autowired
+    JwtUtils jwtUtils;
+
     @PostMapping("/register")
-    public ResponseEntity<?> registerUser(@RequestBody RegisterRequest registerRequest){
-        if (userRepository.existsByUserName(registerRequest.getUserName())){
+    public ResponseEntity<?> registerUser(@RequestBody RegisterRequest registerRequest) {
+        if (userRepository.existsByUserName(registerRequest.getUserName())) {
             return ResponseEntity
                     .badRequest()
                     .body(new MessageResponse("This username has been used!"));
         }
 
-        if (userRepository.existsByEmail(registerRequest.getEmail())){
+        if (userRepository.existsByEmail(registerRequest.getEmail())) {
             return ResponseEntity
                     .badRequest()
                     .body(new MessageResponse("This email has been used!"));
@@ -41,7 +53,23 @@ public class AuthController {
 
         userRepository.save(user);
         return ResponseEntity.ok(new MessageResponse("Registration successful!"));
-
     }
 
+    @PostMapping("/login")
+    public ResponseEntity<?> authenticateUser(@RequestBody LoginRequest loginRequest) {
+
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(loginRequest.getUserName(), loginRequest.getPassword()));
+
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        String jwt = jwtUtils.generateJwtToken(authentication);
+
+        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+
+        return ResponseEntity.ok(new JwtResponse(jwt,
+                userDetails.getId(),
+                userDetails.getUsername(),
+                userDetails.getEmail()
+        ));
+    }
 }
