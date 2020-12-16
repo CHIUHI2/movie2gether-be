@@ -13,7 +13,10 @@ public class ReviewService {
     ReviewRepository reviewRepository;
 
     public Review getByMovieIdAndUserId(String movieId, String userId) {
-        return reviewRepository.findByMovieIdAndUserId(new ObjectId(movieId),new ObjectId(userId));
+        if (!reviewRepository.existsByMovieIdAndUserId(new ObjectId(movieId), new ObjectId(userId))) {
+            return null;
+        }
+        return reviewRepository.findByMovieIdAndUserId(new ObjectId(movieId), new ObjectId(userId));
     }
 
     public Review save(Review review) {
