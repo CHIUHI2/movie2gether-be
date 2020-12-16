@@ -27,7 +27,7 @@ public class BookingController {
     @ResponseStatus(HttpStatus.CREATED)
     BookingResponse book(@RequestBody BookingRequest bookingRequest) throws AlreadyBookedException {
         return bookingMapper.toResponse(
-                bookingService.book(new ObjectId(),
+                bookingService.book(new ObjectId(bookingRequest.getUserId()),
                         new ObjectId(bookingRequest.getSessionId()),
                         bookingRequest.getSeatNumber())
         );

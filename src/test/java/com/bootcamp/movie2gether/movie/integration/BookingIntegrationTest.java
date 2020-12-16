@@ -82,12 +82,15 @@ public class BookingIntegrationTest {
                 post("/bookings")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(
-                                objectMapper.writeValueAsString(BookingRequest.builder().seatNumber("A2").sessionId(session.getId().toHexString()).build())
+                                objectMapper.writeValueAsString(BookingRequest.builder()
+                                        .seatNumber("A2")
+                                        .sessionId(session.getId().toHexString())
+                                        .userId(user.getId().toHexString())
+                                        .build())
                         ))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id").isString())
-//                TODO: check user id as auth is not implemented yet
-//                .andExpect(jsonPath("$.userId").value(user.getId().toHexString()))
+                .andExpect(jsonPath("$.userId").value(user.getId().toHexString()))
                 .andExpect(jsonPath("$.userId").isString())
                 .andExpect(jsonPath("$.sessionId").value(session.getId().toHexString()))
                 .andExpect(jsonPath("$.seatNumber").value("A2"))
