@@ -50,17 +50,10 @@ public class BookingServiceTest {
     void should_store_and_return_booking_when_book_ticket_given_session_seat_and_user() throws AlreadyBookedException {
         //given
         BookingService bookingService = new BookingService(bookingRepository, userRepository, sessionRepository, cinemaRepository, mongoTemplate);
-
-        Cinema cinema = new Cinema();
-        Seat seat = new Seat();
-        seat.setNumber("A1");
-        cinema.setSeats(Collections.singletonList(seat));
-
+        Seat seat = new Seat("A1");
+        Cinema cinema = cinemaRepository.insert(Cinema.builder().name("cinema").seats(Collections.singletonList(seat)).build());
         User user = userRepository.save(new User());
-
-        Session session = new Session();
-        session.setCinemaId(cinema.getId());
-        sessionRepository.save(session);
+        Session session = sessionRepository.save(Session.builder().cinemaId(cinema.getId()).build());
 
         //when
         Booking actual = bookingService.book(user.getId(), session.getId(), Collections.singletonList("A1")).get(0);
@@ -79,19 +72,11 @@ public class BookingServiceTest {
     void should_throw_exception_and_do_nothing_when_book_ticket_given_session_seat_and_user_already_booked() throws AlreadyBookedException {
         //given
         BookingService bookingService = new BookingService(bookingRepository, userRepository, sessionRepository, cinemaRepository, mongoTemplate);
-
-        Cinema cinema = new Cinema();
-        Seat seat = new Seat();
-        seat.setNumber("A1");
-        cinema.setSeats(Collections.singletonList(seat));
-        cinema = cinemaRepository.save(cinema);
-
-        User userBooked = userRepository.save(new User());
+        Seat seat = new Seat("A1");
+        Cinema cinema = cinemaRepository.insert(Cinema.builder().name("cinema").seats(Collections.singletonList(seat)).build());
         User user = userRepository.save(new User());
-
-        Session session = new Session();
-        session.setCinemaId(cinema.getId());
-        sessionRepository.save(session);
+        Session session = sessionRepository.save(Session.builder().cinemaId(cinema.getId()).build());
+        User userBooked = userRepository.save(new User());
 
         //when
         bookingService.book(userBooked.getId(), session.getId(), Collections.singletonList("A1"));
