@@ -15,7 +15,6 @@ import com.bootcamp.movie2gether.user.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Profile;
-import org.springframework.test.context.TestPropertySource;
 
 import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
