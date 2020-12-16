@@ -6,6 +6,7 @@ import com.bootcamp.movie2gether.movie.exception.AlreadyBookedException;
 import com.bootcamp.movie2gether.movie.repository.BookingRepository;
 import com.bootcamp.movie2gether.movie.repository.SessionRepository;
 import com.bootcamp.movie2gether.user.repository.UserRepository;
+import com.mongodb.client.MongoClient;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
@@ -16,7 +17,9 @@ import org.springframework.data.mongodb.core.aggregation.AggregationOperation;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -30,6 +33,8 @@ public class BookingService {
 
     @Autowired
     MongoTemplate mongoTemplate;
+    @Autowired
+    MongoClient client;
 
     public BookingService(BookingRepository bookingRepository, UserRepository userRepository, SessionRepository sessionRepository) {
         this.bookingRepository = bookingRepository;
@@ -37,10 +42,20 @@ public class BookingService {
         this.sessionRepository = sessionRepository;
     }
 
-    public Booking book(ObjectId userId, ObjectId sessionId, String seatNumber) throws AlreadyBookedException {
+    @Transactional
+    public List<Booking> book(ObjectId userId, ObjectId sessionId, List<String> seatNumbers) throws AlreadyBookedException {
         try {
-            Booking booking = new Booking(null, userId, seatNumber, sessionId);
-            return bookingRepository.save(booking);
+            List<Booking> list = new ArrayList<>();
+            for (String seatNumber : seatNumbers) {
+                Booking insert = bookingRepository.insert(
+                        Booking.builder()
+                                .userId(userId)
+                                .seatNumber(seatNumber)
+                                .sessionId(sessionId)
+                                .build());
+                list.add(insert);
+            }
+            return list;
         } catch (DuplicateKeyException exception) {
             throw new AlreadyBookedException();
         }

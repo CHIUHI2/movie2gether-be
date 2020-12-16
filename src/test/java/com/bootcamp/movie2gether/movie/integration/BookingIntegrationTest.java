@@ -24,6 +24,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -161,7 +162,7 @@ public class BookingIntegrationTest {
         LocalDateTime endTime = LocalDateTime.now().plus(Duration.ofHours(2));
         Session session = sessionRepository.save(Session.builder().cinemaId(cinema.getId()).movieId(movie.getId()).startTime(startTime).endTime(endTime).build());
         User user = userRepository.save(new User("spring", "spring@mail.com", "lmao"));
-        Booking booking = bookingService.book(user.getId(), session.getId(), "A2");
+        List<Booking> bookings = bookingService.book(user.getId(), session.getId(), Collections.singletonList("A2"));
         //when
         //then
         mockMvc.perform(
@@ -169,8 +170,8 @@ public class BookingIntegrationTest {
         )
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content", hasSize(1)))
-                .andExpect(jsonPath("$.content.[0].id").value(booking.getId().toHexString()))
-                .andExpect(jsonPath("$.content.[0].seatNumber").value(booking.getSeatNumber()))
+                .andExpect(jsonPath("$.content.[0].id").value(bookings.get(0).getId().toHexString()))
+                .andExpect(jsonPath("$.content.[0].seatNumber").value(bookings.get(0).getSeatNumber()))
                 .andExpect(jsonPath("$.content.[0].userId").value(user.getId().toHexString()))
                 .andExpect(jsonPath("$.content.[0].sessionDetail.movie.id").value(movie.getId().toHexString()))
                 .andExpect(jsonPath("$.content.[0].sessionDetail.movie.title").value(movie.getTitle()))

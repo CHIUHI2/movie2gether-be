@@ -23,6 +23,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -87,7 +88,7 @@ public class SessionIntegrationTest {
         User user = userRepository.save(new User());
         sessions.forEach(session -> {
             try {
-                bookingService.book(user.getId(), session.getId(), "A5");
+                bookingService.book(user.getId(), session.getId(), Collections.singletonList("A5"));
             } catch (AlreadyBookedException ignored) {
             }
         });
