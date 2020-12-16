@@ -10,6 +10,7 @@ import com.bootcamp.movie2gether.movie.service.BookingService;
 import com.bootcamp.movie2gether.user.entity.User;
 import com.bootcamp.movie2gether.user.repository.UserRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.bson.types.ObjectId;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -201,6 +202,27 @@ public class BookingIntegrationTest {
                                         .seatNumbers(null)
                                         .sessionId(session.getId().toHexString())
                                         .userId(user.getId().toHexString())
+                                        .build())
+                        ))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @WithMockUser(value = "spring")
+    void should_return_400_when_book_with_invalid_user_id() throws Exception {
+        //given
+        Session session = sessionRepository.save(Session.builder().build());
+        //when
+        //then
+        ObjectMapper objectMapper = new ObjectMapper();
+        mockMvc.perform(
+                post("/bookings")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(
+                                objectMapper.writeValueAsString(BookingRequest.builder()
+                                        .seatNumbers(Collections.singletonList("A1"))
+                                        .sessionId(session.getId().toHexString())
+                                        .userId(new ObjectId().toHexString())
                                         .build())
                         ))
                 .andExpect(status().isBadRequest());
