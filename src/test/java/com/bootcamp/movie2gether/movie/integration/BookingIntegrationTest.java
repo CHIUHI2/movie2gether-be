@@ -211,14 +211,20 @@ public class BookingIntegrationTest {
                                         .build())
                         ))
                 .andExpect(status().isBadRequest())
-        .andExpect(jsonPath("$.message").value("Invalid BookingRequest"));
+                .andExpect(jsonPath("$.message").value("Invalid BookingRequest"));
     }
 
     @Test
     @WithMockUser(value = "spring")
     void should_return_400_when_book_with_invalid_user_id() throws Exception {
         //given
-        Session session = sessionRepository.save(Session.builder().build());
+        Cinema cinema = cinemaRepository.save(Cinema.builder().seats(IntStream.range(0, 10)
+                .mapToObj(i -> new Seat(String.format("A%d", i)))
+                .collect(Collectors.toList()))
+                .name("AAAA")
+                .build()
+        );
+        Session session = sessionRepository.save(Session.builder().cinemaId(cinema.getId()).build());
         //when
         //then
         ObjectMapper objectMapper = new ObjectMapper();
@@ -234,6 +240,35 @@ public class BookingIntegrationTest {
                         ))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.message").value("Invalid userId"));
+    }
+
+    @Test
+    @WithMockUser(value = "spring")
+    void should_return_400_when_book_with_invalid_seats() throws Exception {
+        //given
+        User user = userRepository.save(new User());
+        Cinema cinema = cinemaRepository.save(Cinema.builder().seats(IntStream.range(0, 10)
+                .mapToObj(i -> new Seat(String.format("A%d", i)))
+                .collect(Collectors.toList()))
+                .name("AAAA")
+                .build()
+        );
+        Session session = sessionRepository.save(Session.builder().cinemaId(cinema.getId()).build());
+        //when
+        //then
+        ObjectMapper objectMapper = new ObjectMapper();
+        mockMvc.perform(
+                post("/bookings")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(
+                                objectMapper.writeValueAsString(BookingRequest.builder()
+                                        .seatNumbers(Collections.singletonList("B1"))
+                                        .sessionId(session.getId().toHexString())
+                                        .userId(user.getId().toHexString())
+                                        .build())
+                        ))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").value("Invalid seatNumber(s)"));
     }
 
 
