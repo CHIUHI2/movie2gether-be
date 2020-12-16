@@ -271,5 +271,27 @@ public class BookingIntegrationTest {
                 .andExpect(jsonPath("$.message").value("Invalid seatNumber(s)"));
     }
 
+    @Test
+    @WithMockUser(value = "spring")
+    void should_return_400_when_book_with_invalid_session() throws Exception {
+        //given
+        User user = userRepository.save(new User());
+        //when
+        //then
+        ObjectMapper objectMapper = new ObjectMapper();
+        mockMvc.perform(
+                post("/bookings")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(
+                                objectMapper.writeValueAsString(BookingRequest.builder()
+                                        .seatNumbers(Collections.singletonList("B1"))
+                                        .sessionId(new ObjectId().toHexString())
+                                        .userId(user.getId().toHexString())
+                                        .build())
+                        ))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").value("Invalid sessionId"));
+    }
+
 
 }
