@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class BookingRequest {
+    private String userId;
     private String seatNumber;
     private String sessionId;
 }
