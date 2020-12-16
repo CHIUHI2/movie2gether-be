@@ -64,4 +64,56 @@ public class ReviewIntegrationTest {
         mockMvc.perform(get("/reviews").param("movieId", "5fd77c99e5f7d6417d7abac1").param("userId","5fd81ac741ea7016828cfd31"))
                 .andExpect(status().isBadRequest());
     }
+
+    @Test
+    @WithMockUser(value = "spring")
+    public void should_return_created_review_when_save_given_review() throws Exception {
+        //given
+        String reviewAsJson = "{\n" +
+                "    \"userId\": \"5fd81ac741ea7016828cfd39\",\n" +
+                "    \"movieId\": \"5fd77c99e5f7d6417d7abac9\",\n" +
+                "    \"rating\": 5,\n" +
+                "    \"comment\": \"very very very boring\"\n" +
+                "}";
+
+        //when
+        //then
+        mockMvc.perform(post("/reviews")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(reviewAsJson))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.rating").value(5))
+                .andExpect(jsonPath("$.comment").value("very very very boring"));
+
+    }
+
+    @Test
+    @WithMockUser(value = "spring")
+    public void should_return_updated_review_when_update_given_review_id_and_review() throws Exception {
+        //given
+        Review review = new Review();
+        review.setMovieId(new ObjectId("5fd77c99e5f7d6417d7abac9"));
+        review.setUserId(new ObjectId("5fd81ac741ea7016828cfd39"));
+        review.setRating(4);
+        review.setComment("funny movie");
+        reviewRepository.save(review);
+
+        String updatedReviewAsJson = "{\n" +
+                "    \"userId\": \"5fd81ac741ea7016828cfd40\",\n" +
+                "    \"movieId\": \"5fd77c99e5f7d6417d7abac4\",\n" +
+                "    \"rating\": 5,\n" +
+                "    \"comment\": \"very very very boring\"\n" +
+                "}";
+
+        //when
+        //then
+        mockMvc.perform(put("/reviews/"+review.getId())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(updatedReviewAsJson))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.rating").value(5))
+                .andExpect(jsonPath("$.comment").value("very very very boring"));
+
+    }
+
 }
