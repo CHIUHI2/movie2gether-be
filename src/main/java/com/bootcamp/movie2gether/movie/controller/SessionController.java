@@ -26,4 +26,9 @@ public class SessionController {
         return sessionService.getDetailsPaged(page, pageSize, cinemaId == null ? null : new ObjectId(cinemaId), movieId == null ? null : new ObjectId(movieId));
     }
 
+    @GetMapping("/{sessionId}")
+    SessionDetail getSessionById(@PathVariable String sessionId){
+        return  sessionService.getSessionById(new ObjectId(sessionId));
+    }
+
 }
