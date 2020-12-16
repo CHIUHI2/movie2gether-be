@@ -4,23 +4,29 @@ import com.bootcamp.movie2gether.movie.entity.Cinema;
 import com.bootcamp.movie2gether.movie.entity.Movie;
 import com.bootcamp.movie2gether.movie.entity.Seat;
 import com.bootcamp.movie2gether.movie.entity.Session;
+import com.bootcamp.movie2gether.movie.exception.AlreadyBookedException;
 import com.bootcamp.movie2gether.movie.repository.BookingRepository;
 import com.bootcamp.movie2gether.movie.repository.CinemaRepository;
 import com.bootcamp.movie2gether.movie.repository.MovieRepository;
 import com.bootcamp.movie2gether.movie.repository.SessionRepository;
-import org.junit.jupiter.api.BeforeEach;
+import com.bootcamp.movie2gether.movie.service.BookingService;
+import com.bootcamp.movie2gether.user.entity.User;
+import com.bootcamp.movie2gether.user.repository.UserRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Profile;
 import org.springframework.test.context.TestPropertySource;
 
 import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-@SpringBootTest
+//@SpringBootTest
+@Profile("dev")
 @TestPropertySource(properties = "spring.autoconfigure.exclude=org.springframework.boot.autoconfigure.mongo.embedded.EmbeddedMongoAutoConfiguration")
 public class MockMovieDataGenerator {
     @Autowired
@@ -31,22 +37,23 @@ public class MockMovieDataGenerator {
     SessionRepository sessionRepository;
     @Autowired
     BookingRepository bookingRepository;
+    @Autowired
+    UserRepository userRepository;
+    @Autowired
+    BookingService bookingService;
 
-    @BeforeEach
-    void deleteAllDocuments() {
+    @Test
+    void addMovieCinemaSession() {
         movieRepository.deleteAll();
         cinemaRepository.deleteAll();
         sessionRepository.deleteAll();
         bookingRepository.deleteAll();
-    }
-
-    @Test
-    void addMovieCinemaSession() {
         List<Movie> movies = movieRepository.saveAll(
                 IntStream.range(0, 10)
                         .mapToObj(i -> Movie.builder()
                                 .title(String.format("Movie %d", i))
                                 .onShow(true)
+                                .releaseDate(ZonedDateTime.now().minusDays(10))
                                 .build())
                         .collect(Collectors.toList())
         );
@@ -62,7 +69,7 @@ public class MockMovieDataGenerator {
                                 .build())
                         .collect(Collectors.toList())
         );
-        sessionRepository.saveAll(
+        List<Session> sessions = sessionRepository.saveAll(
                 IntStream.range(0, 100)
                         .mapToObj(i -> Session.builder()
                                 .movieId(movies.get(ThreadLocalRandom.current().nextInt(movies.size())).getId())
@@ -72,5 +79,27 @@ public class MockMovieDataGenerator {
                                 .build()
                         )
                         .collect(Collectors.toList()));
+    }
+
+    @Test
+    void addBookings() {
+        List<User> users = userRepository.findAll();
+        List<Session> sessions = sessionRepository.findAll();
+        sessions.forEach(
+                session -> {
+                    Optional<Cinema> cinema = cinemaRepository.findById(session.getCinemaId().toHexString());
+                    cinema.ifPresent(cinema1 ->
+                    {
+                        User user = users.get(ThreadLocalRandom.current().nextInt(users.size()));
+                        try {
+                            bookingService.book(user.getId(), session.getId(), cinema1.getSeats().get(
+                                    ThreadLocalRandom.current().nextInt(cinema1.getSeats().size())
+                                    ).getNumber()
+                            );
+                        } catch (AlreadyBookedException ignored) {
+                        }
+                    });
+                }
+        );
     }
 }
