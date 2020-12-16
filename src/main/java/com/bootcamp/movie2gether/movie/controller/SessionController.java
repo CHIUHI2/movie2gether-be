@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/sessions")
 @ResponseBody
+@CrossOrigin
 public class SessionController {
     @Autowired
     SessionService sessionService;
@@ -23,6 +24,11 @@ public class SessionController {
                                             @RequestParam(required = false) String movieId,
                                             @RequestParam(required = false) String cinemaId) {
         return sessionService.getDetailsPaged(page, pageSize, cinemaId == null ? null : new ObjectId(cinemaId), movieId == null ? null : new ObjectId(movieId));
+    }
+
+    @GetMapping("/{sessionId}")
+    SessionDetail getSessionById(@PathVariable String sessionId){
+        return  sessionService.getSessionById(new ObjectId(sessionId));
     }
 
 }

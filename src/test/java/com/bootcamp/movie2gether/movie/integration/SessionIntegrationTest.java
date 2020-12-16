@@ -137,6 +137,7 @@ public class SessionIntegrationTest {
                 get(String.format("/sessions?page=0&pageSize=1&movieId=%s&cinemaId=%s",
                         movie2.getId().toHexString(),
                         cinemaA.getId().toHexString())))
+                .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content", hasSize(1)))
                 .andExpect(jsonPath("$.content.[0].id").value(session2A.getId().toHexString()))
                 .andExpect(jsonPath("$.content.[0].movie.id").value(movie2.getId().toHexString()))
@@ -150,4 +151,37 @@ public class SessionIntegrationTest {
         ;
 
     }
+
+    @Test
+    @WithMockUser(value = "spring")
+    void should_return_session_when_get_session_give_id() throws Exception {
+        //given
+        Movie movie = movieRepository.save(Movie.builder().onShow(true).title("1917").build());
+        Cinema cinemaA = cinemaRepository.save(Cinema.builder().seats(IntStream.range(0, 10)
+                .mapToObj(i -> new Seat(String.format("A%d", i)))
+                .collect(Collectors.toList()))
+                .name("AAAA")
+                .build()
+        );
+        LocalDateTime startTime = LocalDateTime.now();
+        LocalDateTime endTime = LocalDateTime.now().plus(Duration.ofHours(2));
+        Session session = sessionRepository.save(Session.builder().cinemaId(cinemaA.getId()).movieId(movie.getId()).startTime(startTime).endTime(endTime).build());
+        //when
+        //then
+        mockMvc.perform(
+                get(String.format("/sessions/%s",
+                        session.getId().toHexString())))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(session.getId().toHexString()))
+                .andExpect(jsonPath("$.movie.id").value(movie.getId().toHexString()))
+                .andExpect(jsonPath("$.movie.title").value(movie.getTitle()))
+                .andExpect(jsonPath("$.cinema.id").value(cinemaA.getId().toHexString()))
+                .andExpect(jsonPath("$.cinema.name").value(cinemaA.getName()))
+                .andExpect(jsonPath("$.cinema.seats", hasSize(10)))
+                .andExpect(jsonPath("$.bookings", hasSize(0)))
+                .andExpect(jsonPath("$.startTime", startsWith(startTime.format(DateTimeFormatter.ofPattern("uuuu-MM-dd'T'HH:mm:ss")))))
+                .andExpect(jsonPath("$.endTime", startsWith(endTime.format(DateTimeFormatter.ofPattern("uuuu-MM-dd'T'HH:mm:ss")))))
+        ;
+    }
+
 }

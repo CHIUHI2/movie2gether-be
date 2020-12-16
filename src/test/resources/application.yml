@@ -1,7 +1,7 @@
 spring:
   data:
     mongodb:
-      uri : localhost:27017/movie2gether
+      uri : mongodb://localhost:27017/movie2gether
       auto-index-creation: true
 
 # App Properties
