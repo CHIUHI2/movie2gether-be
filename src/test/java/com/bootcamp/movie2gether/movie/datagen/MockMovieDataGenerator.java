@@ -12,8 +12,8 @@ import com.bootcamp.movie2gether.movie.repository.SessionRepository;
 import com.bootcamp.movie2gether.movie.service.BookingService;
 import com.bootcamp.movie2gether.user.entity.User;
 import com.bootcamp.movie2gether.user.repository.UserRepository;
-import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Profile;
 import org.springframework.test.context.TestPropertySource;
 
@@ -25,7 +25,7 @@ import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-//@SpringBootTest
+@SpringBootTest
 @Profile("dev")
 @TestPropertySource(properties = "spring.autoconfigure.exclude=org.springframework.boot.autoconfigure.mongo.embedded.EmbeddedMongoAutoConfiguration")
 public class MockMovieDataGenerator {
@@ -42,7 +42,7 @@ public class MockMovieDataGenerator {
     @Autowired
     BookingService bookingService;
 
-    @Test
+//    @Test
     void addMovieCinemaSession() {
         movieRepository.deleteAll();
         cinemaRepository.deleteAll();
@@ -53,6 +53,7 @@ public class MockMovieDataGenerator {
                         .mapToObj(i -> Movie.builder()
                                 .title(String.format("Movie %d", i))
                                 .onShow(true)
+                                .popularity(50.0f)
                                 .releaseDate(ZonedDateTime.now().minusDays(10))
                                 .build())
                         .collect(Collectors.toList())
@@ -81,7 +82,7 @@ public class MockMovieDataGenerator {
                         .collect(Collectors.toList()));
     }
 
-    @Test
+//    @Test
     void addBookings() {
         List<User> users = userRepository.findAll();
         List<Session> sessions = sessionRepository.findAll();
