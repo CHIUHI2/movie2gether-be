@@ -123,7 +123,7 @@ public class BookingIntegrationTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(
                                 objectMapper.writeValueAsString(BookingRequest.builder()
-                                        .seatNumbers(Arrays.asList("A2","A3","A4"))
+                                        .seatNumbers(Arrays.asList("A2", "A3", "A4"))
                                         .sessionId(session.getId().toHexString())
                                         .userId(user.getId().toHexString())
                                         .build())
@@ -182,6 +182,28 @@ public class BookingIntegrationTest {
                 .andExpect(jsonPath("$.content.[0].sessionDetail.startTime", startsWith(startTime.format(DateTimeFormatter.ofPattern("uuuu-MM-dd'T'HH:mm:ss")))))
                 .andExpect(jsonPath("$.content.[0].sessionDetail.endTime", startsWith(endTime.format(DateTimeFormatter.ofPattern("uuuu-MM-dd'T'HH:mm:ss")))))
         ;
+    }
+
+    @Test
+    @WithMockUser(value = "spring")
+    void should_return_400_when_book_with_no_seats() throws Exception {
+        //given
+        User user = userRepository.save(new User());
+        Session session = sessionRepository.save(Session.builder().build());
+        //when
+        //then
+        ObjectMapper objectMapper = new ObjectMapper();
+        mockMvc.perform(
+                post("/bookings")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(
+                                objectMapper.writeValueAsString(BookingRequest.builder()
+                                        .seatNumbers(null)
+                                        .sessionId(session.getId().toHexString())
+                                        .userId(user.getId().toHexString())
+                                        .build())
+                        ))
+                .andExpect(status().isBadRequest());
     }
 
 
