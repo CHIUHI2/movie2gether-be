@@ -18,6 +18,9 @@ public class ReviewMapper {
     }
 
     public ReviewResponse toResponse(Review review){
+        if(review == null){
+            return new ReviewResponse();
+        }
         ReviewResponse reviewResponse = new ReviewResponse();
         BeanUtils.copyProperties(review, reviewResponse);
         reviewResponse.setId(review.getId().toString());
