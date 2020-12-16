@@ -29,6 +29,8 @@ public class BookingController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     List<BookingResponse> book(@RequestBody BookingRequest bookingRequest) throws AlreadyBookedException {
+        if (bookingRequest.getUserId() == null || bookingRequest.getSessionId() == null || bookingRequest.getSeatNumbers() == null)
+            throw new IllegalArgumentException("Invalid BookingRequest");
         return bookingService.book(
                 new ObjectId(bookingRequest.getUserId()),
                 new ObjectId(bookingRequest.getSessionId()),
