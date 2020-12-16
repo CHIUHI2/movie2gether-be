@@ -50,7 +50,7 @@ public class ReviewIntegrationTest {
 
     @Test
     @WithMockUser(value = "spring")
-    public void should_return_bad_request_when_get_review_given_invalid_userId_and_invalid_movieId() throws Exception {
+    public void should_return_empty_review_response_when_get_review_given_invalid_userId_and_invalid_movieId() throws Exception {
         //given
         Review review = new Review();
         review.setMovieId(new ObjectId("5fd77c99e5f7d6417d7abac9"));
@@ -62,7 +62,7 @@ public class ReviewIntegrationTest {
         //when
         //then
         mockMvc.perform(get("/reviews").param("movieId", "5fd77c99e5f7d6417d7abac1").param("userId","5fd81ac741ea7016828cfd31"))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isOk());
     }
 
     @Test

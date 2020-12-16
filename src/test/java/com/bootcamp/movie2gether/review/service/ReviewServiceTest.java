@@ -31,6 +31,7 @@ public class ReviewServiceTest {
     public void should_return_review_from_a_specific_user_of_a_specific_movie_when_get_by_movieId_and_userId_given_movieId_and_userId() {
         //given
         final Review expected = new Review();
+        when(reviewRepository.existsByMovieIdAndUserId(any(),any())).thenReturn(true);
         when(reviewRepository.findByMovieIdAndUserId(any(),any())).thenReturn(expected);
 
         //when
