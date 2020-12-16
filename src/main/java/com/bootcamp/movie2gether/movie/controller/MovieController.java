@@ -14,6 +14,7 @@ import java.util.List;
 @RestController
 @RequestMapping(value = "/movies")
 @CrossOrigin
+@ResponseBody
 public class MovieController {
     @Autowired
     private MovieMapper movieMapper;
