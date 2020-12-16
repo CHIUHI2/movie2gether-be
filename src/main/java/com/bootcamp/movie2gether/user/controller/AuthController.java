@@ -8,6 +8,7 @@ import com.bootcamp.movie2gether.user.entity.User;
 import com.bootcamp.movie2gether.user.repository.UserRepository;
 import com.bootcamp.movie2gether.user.security.jwt.JwtUtils;
 import com.bootcamp.movie2gether.user.security.service.UserDetailsImpl;
+import com.bootcamp.movie2gether.user.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -16,8 +17,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
-
-import javax.servlet.http.HttpServletResponse;
 
 @RestController
 @RequestMapping("/auth")
@@ -35,8 +34,13 @@ public class AuthController {
     @Autowired
     JwtUtils jwtUtils;
 
+    @Autowired
+    UserService userService;
+
     @PostMapping("/register")
     public ResponseEntity<?> registerUser(@RequestBody RegisterRequest registerRequest) {
+        userService.validateRegistrationRequest(registerRequest);
+
         if (userRepository.existsByUserName(registerRequest.getUserName())) {
             return ResponseEntity
                     .badRequest()
