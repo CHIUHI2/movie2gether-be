@@ -25,7 +25,7 @@ public class UserService {
             throw new WrongEmailFormatException();
         }
 
-        if (!registerRequest.getPassword().matches("^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z]{8,}$")) {
+        if (!registerRequest.getPassword().matches("^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z.!#$%&'*+/=?^_`{|}~-]{8,}$")) {
             throw new WeakPasswordException();
         }
 
