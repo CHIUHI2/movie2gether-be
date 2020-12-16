@@ -29,7 +29,7 @@ public class BookingController {
         return bookingMapper.toResponse(
                 bookingService.book(new ObjectId(bookingRequest.getUserId()),
                         new ObjectId(bookingRequest.getSessionId()),
-                        bookingRequest.getSeatNumber())
+                        bookingRequest.getSeatNumbers().get(0))
         );
     }
 

@@ -22,6 +22,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -83,17 +85,64 @@ public class BookingIntegrationTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(
                                 objectMapper.writeValueAsString(BookingRequest.builder()
-                                        .seatNumber("A2")
+                                        .seatNumbers(Collections.singletonList("A2"))
                                         .sessionId(session.getId().toHexString())
                                         .userId(user.getId().toHexString())
                                         .build())
                         ))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.id").isString())
-                .andExpect(jsonPath("$.userId").value(user.getId().toHexString()))
-                .andExpect(jsonPath("$.userId").isString())
-                .andExpect(jsonPath("$.sessionId").value(session.getId().toHexString()))
-                .andExpect(jsonPath("$.seatNumber").value("A2"))
+                .andExpect(jsonPath("$.[0].id").isString())
+                .andExpect(jsonPath("$.[0].userId").value(user.getId().toHexString()))
+                .andExpect(jsonPath("$.[0].userId").isString())
+                .andExpect(jsonPath("$.[0].sessionId").value(session.getId().toHexString()))
+                .andExpect(jsonPath("$.[0].seatNumber").value("A2"))
+        ;
+    }
+
+    @Test
+    @WithMockUser(value = "spring")
+    void should_return_booking_info_when_book_with_session_and_multiple_seats_given_available_seat() throws Exception {
+        //given
+        Movie movie = movieRepository.save(Movie.builder().onShow(true).title("Tenet").build());
+        Cinema cinema = cinemaRepository.save(Cinema.builder().seats(IntStream.range(0, 10)
+                .mapToObj(i -> new Seat(String.format("A%d", i)))
+                .collect(Collectors.toList()))
+                .name("AAAA")
+                .build()
+        );
+        LocalDateTime startTime = LocalDateTime.now();
+        LocalDateTime endTime = LocalDateTime.now().plus(Duration.ofHours(2));
+        Session session = sessionRepository.save(Session.builder().cinemaId(cinema.getId()).movieId(movie.getId()).startTime(startTime).endTime(endTime).build());
+        User user = userRepository.save(new User("spring", "spring@mail.com", "lmao"));
+        //when
+        //then
+        ObjectMapper objectMapper = new ObjectMapper();
+        mockMvc.perform(
+                post("/bookings")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(
+                                objectMapper.writeValueAsString(BookingRequest.builder()
+                                        .seatNumbers(Arrays.asList("A2","A3","A4"))
+                                        .sessionId(session.getId().toHexString())
+                                        .userId(user.getId().toHexString())
+                                        .build())
+                        ))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.[0].id").isString())
+                .andExpect(jsonPath("$.[0].userId").value(user.getId().toHexString()))
+                .andExpect(jsonPath("$.[0].userId").value(user.getId().toHexString()))
+                .andExpect(jsonPath("$.[0].sessionId").value(session.getId().toHexString()))
+                .andExpect(jsonPath("$.[0].seatNumber").value("A2"))
+                .andExpect(jsonPath("$.[1].id").isString())
+                .andExpect(jsonPath("$.[1].userId").value(user.getId().toHexString()))
+                .andExpect(jsonPath("$.[1].userId").value(user.getId().toHexString()))
+                .andExpect(jsonPath("$.[1].sessionId").value(session.getId().toHexString()))
+                .andExpect(jsonPath("$.[1].seatNumber").value("A3"))
+                .andExpect(jsonPath("$.[2].id").isString())
+                .andExpect(jsonPath("$.[2].userId").value(user.getId().toHexString()))
+                .andExpect(jsonPath("$.[2].userId").value(user.getId().toHexString()))
+                .andExpect(jsonPath("$.[2].sessionId").value(session.getId().toHexString()))
+                .andExpect(jsonPath("$.[2].seatNumber").value("A4"))
         ;
     }
 
