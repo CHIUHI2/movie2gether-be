@@ -49,7 +49,7 @@ public class BookingServiceTest {
     @Test
     void should_store_and_return_booking_when_book_ticket_given_session_seat_and_user() throws AlreadyBookedException {
         //given
-        BookingService bookingService = new BookingService(bookingRepository, userRepository, sessionRepository);
+        BookingService bookingService = new BookingService(bookingRepository, userRepository, sessionRepository, cinemaRepository, mongoTemplate);
 
         Cinema cinema = new Cinema();
         Seat seat = new Seat();
@@ -78,7 +78,7 @@ public class BookingServiceTest {
     @Test
     void should_throw_exception_and_do_nothing_when_book_ticket_given_session_seat_and_user_already_booked() throws AlreadyBookedException {
         //given
-        BookingService bookingService = new BookingService(bookingRepository, userRepository, sessionRepository);
+        BookingService bookingService = new BookingService(bookingRepository, userRepository, sessionRepository, cinemaRepository, mongoTemplate);
 
         Cinema cinema = new Cinema();
         Seat seat = new Seat();
@@ -103,7 +103,7 @@ public class BookingServiceTest {
     @Test
     void should_no_new_booking_created_when_book_seats_given_some_seats_already_booked() throws AlreadyBookedException {
         //given
-        BookingService bookingService = new BookingService(bookingRepository, userRepository, sessionRepository);
+        BookingService bookingService = new BookingService(bookingRepository, userRepository, sessionRepository, cinemaRepository, mongoTemplate);
 
         Cinema cinema = new Cinema();
         Seat seat = new Seat();

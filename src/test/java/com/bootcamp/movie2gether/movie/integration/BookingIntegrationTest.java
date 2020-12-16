@@ -190,7 +190,13 @@ public class BookingIntegrationTest {
     void should_return_400_when_book_with_no_seats() throws Exception {
         //given
         User user = userRepository.save(new User());
-        Session session = sessionRepository.save(Session.builder().build());
+        Cinema cinema = cinemaRepository.save(Cinema.builder().seats(IntStream.range(0, 10)
+                .mapToObj(i -> new Seat(String.format("A%d", i)))
+                .collect(Collectors.toList()))
+                .name("AAAA")
+                .build()
+        );
+        Session session = sessionRepository.save(Session.builder().cinemaId(cinema.getId()).build());
         //when
         //then
         ObjectMapper objectMapper = new ObjectMapper();
@@ -204,7 +210,8 @@ public class BookingIntegrationTest {
                                         .userId(user.getId().toHexString())
                                         .build())
                         ))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isBadRequest())
+        .andExpect(jsonPath("$.message").value("Invalid BookingRequest"));
     }
 
     @Test
@@ -225,7 +232,8 @@ public class BookingIntegrationTest {
                                         .userId(new ObjectId().toHexString())
                                         .build())
                         ))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").value("Invalid userId"));
     }
 
 
