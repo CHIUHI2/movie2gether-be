@@ -52,7 +52,7 @@ public class BookingService {
         Session session = sessionRepository.findById(sessionId.toHexString()).orElseThrow(() -> new IllegalArgumentException("Invalid sessionId"));
         Cinema cinema = cinemaRepository.findById(session.getCinemaId().toHexString()).orElseThrow(() -> new IllegalStateException(String.format("Session %s pointing to invalid cinema", session.getId().toHexString())));
         if(!seatNumbers.stream().allMatch(seatNumber -> cinema.getSeats().stream().anyMatch(seat -> seat.getNumber().equals(seatNumber))))
-            throw new IllegalArgumentException("Invalid seatNumber(s) supplied");
+            throw new IllegalArgumentException("Invalid seatNumber(s)");
         try {
             List<Booking> list = new ArrayList<>();
             for (String seatNumber : seatNumbers) {
