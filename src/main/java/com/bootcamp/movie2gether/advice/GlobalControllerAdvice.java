@@ -2,6 +2,9 @@ package com.bootcamp.movie2gether.advice;
 
 import com.bootcamp.movie2gether.movie.exception.AlreadyBookedException;
 import com.bootcamp.movie2gether.movie.exception.MovieNotFoundException;
+import com.bootcamp.movie2gether.user.exceptions.EmptyInputException;
+import com.bootcamp.movie2gether.user.exceptions.WeakPasswordException;
+import com.bootcamp.movie2gether.user.exceptions.WrongEmailFormatException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -38,5 +41,15 @@ public class GlobalControllerAdvice {
     @ExceptionHandler({BadCredentialsException.class})
     public ErrorResponse handleBadCredentialException(Exception exception) {
         return new ErrorResponse(HttpStatus.UNAUTHORIZED.name(), exception.getMessage());
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler({
+            EmptyInputException.class,
+            WrongEmailFormatException.class,
+            WeakPasswordException.class
+    })
+    public ErrorResponse handleInputExceptions(Exception exception) {
+        return new ErrorResponse(HttpStatus.BAD_REQUEST.name(), exception.getMessage());
     }
 }
