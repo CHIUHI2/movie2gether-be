@@ -10,12 +10,17 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.http.MediaType;
 
+import java.time.ZonedDateTime;
+import java.time.temporal.TemporalAmount;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -129,7 +134,7 @@ public class ReviewIntegrationTest {
 
     @Test
     @WithMockUser(value = "spring")
-    public void should_return_one_review_when_get_review_by_movie_id_with_pagination_given_existed_movie_id_page() throws Exception {
+    public void should_return_oldest_review_when_get_review_by_movie_id_with_pagination_given_existed_movie_id_page() throws Exception {
         //given
         Movie movie = new Movie();
         movie = movieRepository.insert(movie);
@@ -139,9 +144,14 @@ public class ReviewIntegrationTest {
             Review review = new Review();
             review.setMovieId(movie.getId());
             review.setUserId(new ObjectId());
+            review.setLastModifiedAt(ZonedDateTime.now().plusHours(index));
             review = reviewRepository.insert(review);
             reviews.add(review);
         }
+
+        reviews = reviews.stream()
+                .sorted(Comparator.comparing(Review::getLastModifiedAt, Comparator.reverseOrder()))
+                .collect(Collectors.toList());
 
         //when
         //then

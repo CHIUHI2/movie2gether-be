@@ -5,6 +5,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 @Data
 @Builder
 @NoArgsConstructor
@@ -16,4 +18,6 @@ public class ReviewResponse {
     private String movieId;
     private Integer rating;
     private String comment;
+    private LocalDateTime createdAt;
+    private LocalDateTime LastModifiedAt;
 }

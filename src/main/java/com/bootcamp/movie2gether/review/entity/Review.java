@@ -31,8 +31,6 @@ public class Review {
     private ObjectId movieId;
     private Integer rating;
     private String comment;
-    @CreatedDate
-    private Date createdAt;
-    @LastModifiedDate
-    private Date lastModifiedAt;
+    private ZonedDateTime createdAt;
+    private ZonedDateTime lastModifiedAt;
 }
