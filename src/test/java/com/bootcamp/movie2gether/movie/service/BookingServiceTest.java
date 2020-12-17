@@ -1,9 +1,6 @@
 package com.bootcamp.movie2gether.movie.service;
 
-import com.bootcamp.movie2gether.movie.entity.Booking;
-import com.bootcamp.movie2gether.movie.entity.Cinema;
-import com.bootcamp.movie2gether.movie.entity.Seat;
-import com.bootcamp.movie2gether.movie.entity.Session;
+import com.bootcamp.movie2gether.movie.entity.*;
 import com.bootcamp.movie2gether.movie.exception.AlreadyBookedException;
 import com.bootcamp.movie2gether.movie.repository.BookingRepository;
 import com.bootcamp.movie2gether.movie.repository.CinemaRepository;
@@ -55,7 +52,8 @@ public class BookingServiceTest {
         Seat seat2 = new Seat("A2");
         Cinema cinema = cinemaRepository.insert(Cinema.builder().name("cinema").seats(Arrays.asList(seat1, seat2)).build());
         User user = userRepository.save(new User());
-        Session session = sessionRepository.save(Session.builder().cinemaId(cinema.getId()).build());
+        Movie movie = movieRepository.insert(Movie.builder().title("gg").build());
+        Session session = sessionRepository.save(Session.builder().cinemaId(cinema.getId()).movieId(movie.getId()).build());
 
         //when
         List<Booking> bookings = bookingService.book(user.getId(), session.getId(), Arrays.asList("A1", "A2"));

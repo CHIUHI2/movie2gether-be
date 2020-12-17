@@ -1,6 +1,6 @@
 package com.bootcamp.movie2gether.movie.controller;
 
-import com.bootcamp.movie2gether.movie.dto.BookingDetailResponse;
+import com.bootcamp.movie2gether.movie.dto.BookingDetail;
 import com.bootcamp.movie2gether.movie.dto.BookingRequest;
 import com.bootcamp.movie2gether.movie.dto.BookingResponse;
 import com.bootcamp.movie2gether.movie.exception.AlreadyBookedException;
@@ -43,9 +43,9 @@ public class BookingController {
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    Page<BookingDetailResponse> getBookingDetails(@RequestParam Integer page,
-                                                  @RequestParam Integer pageSize,
-                                                  @RequestParam String userId) {
+    Page<BookingDetail> getBookingDetails(@RequestParam Integer page,
+                                          @RequestParam Integer pageSize,
+                                          @RequestParam String userId) {
         return bookingService.getPagedBookingDetailsByUserId(new ObjectId(userId), page, pageSize);
     }
 }

@@ -164,13 +164,15 @@ public class BookingIntegrationTest {
         Session session = sessionRepository.save(Session.builder().cinemaId(cinema.getId()).movieId(movie.getId()).startTime(startTime).endTime(endTime).build());
         User user = userRepository.save(new User("spring", "spring@mail.com", "lmao"));
         List<Booking> bookings = bookingService.book(user.getId(), session.getId(), Collections.singletonList("A2"));
+        bookingService.book(user.getId(), session.getId(), Collections.singletonList("A3"));
         //when
         //then
         mockMvc.perform(
                 get(String.format("/bookings?page=0&pageSize=10&userId=%s", user.getId().toHexString()))
         )
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.content", hasSize(1)))
+                .andExpect(jsonPath("$.totalElements").value(2))
+                .andExpect(jsonPath("$.content", hasSize(2)))
                 .andExpect(jsonPath("$.content.[0].id").value(bookings.get(0).getId().toHexString()))
                 .andExpect(jsonPath("$.content.[0].seatNumber").value(bookings.get(0).getSeatNumber()))
                 .andExpect(jsonPath("$.content.[0].userId").value(user.getId().toHexString()))
@@ -179,7 +181,7 @@ public class BookingIntegrationTest {
                 .andExpect(jsonPath("$.content.[0].sessionDetail.cinema.id").value(cinema.getId().toHexString()))
                 .andExpect(jsonPath("$.content.[0].sessionDetail.cinema.name").value(cinema.getName()))
                 .andExpect(jsonPath("$.content.[0].sessionDetail.cinema.seats", hasSize(cinema.getSeats().size())))
-                .andExpect(jsonPath("$.content.[0].sessionDetail.bookings", hasSize(1)))
+                .andExpect(jsonPath("$.content.[0].sessionDetail.bookings", hasSize(2)))
                 .andExpect(jsonPath("$.content.[0].sessionDetail.startTime", startsWith(startTime.format(DateTimeFormatter.ofPattern("uuuu-MM-dd'T'HH:mm:ss")))))
                 .andExpect(jsonPath("$.content.[0].sessionDetail.endTime", startsWith(endTime.format(DateTimeFormatter.ofPattern("uuuu-MM-dd'T'HH:mm:ss")))))
         ;
