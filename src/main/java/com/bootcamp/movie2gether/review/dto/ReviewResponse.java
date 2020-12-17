@@ -12,6 +12,7 @@ import lombok.NoArgsConstructor;
 public class ReviewResponse {
     private String id;
     private String userId;
+    private String userName;
     private String movieId;
     private Integer rating;
     private String comment;
