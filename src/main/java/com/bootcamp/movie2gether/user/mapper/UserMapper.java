@@ -9,7 +9,9 @@ import org.springframework.stereotype.Component;
 public class UserMapper {
     public UserProfileResponse toUserProfileResponse(User user) {
         UserProfileResponse userProfileResponse = new UserProfileResponse();
+
         BeanUtils.copyProperties(user, userProfileResponse);
+        userProfileResponse.setId(user.getId().toString());
 
         return userProfileResponse;
     }

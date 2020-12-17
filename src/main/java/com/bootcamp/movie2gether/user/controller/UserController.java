@@ -35,18 +35,18 @@ public class UserController {
     private static final String FRIEND_REQUEST_ACTION_UNFRIEND = "UNFRIEND";
 
     @GetMapping("/{id}")
-    public UserProfileResponse getById(@PathVariable String id) throws MovieNotFoundException, UserNotFoundException {
+    public UserProfileResponse getById(@PathVariable String id) throws UserNotFoundException {
         User user = userService.findById(id);
 
         List<UserProfileResponse> friendList = user.getFriends().stream()
                 .map(userId -> {
                     try {
-                        return userMapper.toUserProfileResponse(userService.findById(id));
+                        return userMapper.toUserProfileResponse(userService.findById(userId.toString()));
                     } catch (UserNotFoundException e) {
                         return null;
                     }
                 })
-                .filter(Objects::isNull)
+                .filter(Objects::nonNull)
                 .collect(Collectors.toList());
 
 
@@ -61,10 +61,40 @@ public class UserController {
         String action = friendRequest.getAction();
 
         if(FRIEND_REQUEST_ACTION_ADD_FRIEND.equalsIgnoreCase(action)) {
-            return userMapper.toUserProfileResponse(userService.addFriend(friendRequest, id));
+            User user = userService.addFriend(friendRequest, id);
+            List<UserProfileResponse> friends = user.getFriends().stream()
+                    .map(userId -> {
+                        try {
+                            return userMapper.toUserProfileResponse(userService.findById(userId.toString()));
+                        } catch (UserNotFoundException e) {
+                            return null;
+                        }
+                    })
+                    .filter(Objects::nonNull)
+                    .collect(Collectors.toList());
+
+            UserProfileResponse userProfileResponse = userMapper.toUserProfileResponse(user);
+            userProfileResponse.setFriends(friends);
+
+            return userProfileResponse;
         }
         else if(FRIEND_REQUEST_ACTION_UNFRIEND.equalsIgnoreCase(action)) {
-            return userMapper.toUserProfileResponse(userService.removeFriend(friendRequest, id));
+            User user = userService.removeFriend(friendRequest, id);
+            List<UserProfileResponse> friends = user.getFriends().stream()
+                    .map(userId -> {
+                        try {
+                            return userMapper.toUserProfileResponse(userService.findById(userId.toString()));
+                        } catch (UserNotFoundException e) {
+                            return null;
+                        }
+                    })
+                    .filter(Objects::nonNull)
+                    .collect(Collectors.toList());
+
+            UserProfileResponse userProfileResponse = userMapper.toUserProfileResponse(user);
+            userProfileResponse.setFriends(friends);
+
+            return userProfileResponse;
         }
         else {
             throw new FriendRequestActionInvalidException();
