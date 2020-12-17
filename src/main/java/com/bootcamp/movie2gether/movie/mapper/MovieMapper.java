@@ -6,6 +6,7 @@ import com.bootcamp.movie2gether.movie.entity.Movie;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Component;
 
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -16,6 +17,7 @@ public class MovieMapper {
 
         BeanUtils.copyProperties(movie, movieDetailResponse);
         movieDetailResponse.setId(movie.getId().toString());
+        movieDetailResponse.setOnShow(ZonedDateTime.now().isAfter(movie.getReleaseDate()));
 
         return movieDetailResponse;
     }
