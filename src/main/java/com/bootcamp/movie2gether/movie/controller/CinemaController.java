@@ -2,6 +2,7 @@ package com.bootcamp.movie2gether.movie.controller;
 
 import com.bootcamp.movie2gether.movie.entity.Cinema;
 import com.bootcamp.movie2gether.movie.service.CinemaService;
+import io.swagger.v3.oas.annotations.Operation;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -17,8 +18,9 @@ public class CinemaController {
     @Autowired
     CinemaService cinemaService;
 
-    @GetMapping
+    @GetMapping(produces = {"application/json"})
     @ResponseStatus(HttpStatus.OK)
+    @Operation(summary = "Get all cinemas, or cinemas filtered by movie.")
     Page<Cinema> getPagedCinemas(@RequestParam Integer page,
                                  @RequestParam Integer pageSize,
                                  @RequestParam(required = false) String movieId) {

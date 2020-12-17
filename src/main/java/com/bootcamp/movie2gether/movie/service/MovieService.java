@@ -20,14 +20,10 @@ public class MovieService {
         return movieRepository.findById(id).orElseThrow(MovieNotFoundException::new);
     }
 
-    public List<Movie> test() {
-        return this.movieRepository.findByReleaseDate(ZonedDateTime.now());
-    }
-
     public List<Movie> findComingSoonMovies(boolean isRecommend) {
         List<Movie> movies = movieRepository.findByReleaseDateGreaterThan(ZonedDateTime.now());
 
-        if(isRecommend) {
+        if (isRecommend) {
             return movies.stream()
                     .sorted(Comparator.comparing(Movie::getPopularity, Comparator.reverseOrder()))
                     .limit(10)
@@ -40,7 +36,7 @@ public class MovieService {
     public List<Movie> findOnShowMovies(boolean isRecommend) {
         List<Movie> movies = movieRepository.findByReleaseDateNotGreaterThan(ZonedDateTime.now());
 
-        if(isRecommend) {
+        if (isRecommend) {
             return movies.stream()
                     .sorted(Comparator.comparing(Movie::getPopularity, Comparator.reverseOrder()))
                     .limit(10)
