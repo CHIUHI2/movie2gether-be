@@ -52,7 +52,7 @@ public class BookingService {
         User user = userRepository.findById(userId.toHexString()).orElseThrow(() -> new IllegalArgumentException("Invalid userId"));
         Session session = sessionRepository.findById(sessionId.toHexString()).orElseThrow(() -> new IllegalArgumentException("Invalid sessionId"));
         Cinema cinema = cinemaRepository.findById(session.getCinemaId().toHexString()).orElseThrow(() -> new IllegalStateException(String.format("Session %s pointing to invalid cinema", session.getId().toHexString())));
-        if(!seatNumbers.stream().allMatch(seatNumber -> cinema.getSeats().stream().anyMatch(seat -> seat.getNumber().equals(seatNumber))))
+        if (!seatNumbers.stream().allMatch(seatNumber -> cinema.getSeats().stream().anyMatch(seat -> seat.getNumber().equals(seatNumber))))
             throw new IllegalArgumentException("Invalid seatNumber(s)");
         try {
             List<Booking> list = new ArrayList<>();
@@ -75,7 +75,7 @@ public class BookingService {
         Pageable pageable = PageRequest.of(page, pageSize);
         List<AggregationOperation> aggregationOperations =
                 Arrays.asList(match(Criteria.where("userId").is(userId)),
-                       group("sessionId").first("$sessionId").as("sessionId"),
+                        group("sessionId").first("$sessionId").as("sessionId"),
                         lookup("session", "sessionId", "_id", "sessionDetail"),
                         unwind("$sessionDetail"),
                         lookup("cinema", "sessionDetail.cinemaId", "_id", "sessionDetail.cinema"),
@@ -84,7 +84,6 @@ public class BookingService {
                         unwind("$sessionDetail.cinema"),
                         unwind("$sessionDetail.movie"),
                         sort(Sort.Direction.ASC, "sessionDetail.startTime"),
-                        //group(Fields.from(Fields.field("_id", "sessionId"))),
                         skip((long) pageSize * page),
                         limit(pageSize)
                 );
@@ -96,7 +95,5 @@ public class BookingService {
 
         List<BookingDetailResponse> mappedResults = mongoTemplate.aggregate(dataAggregation, "booking", BookingDetailResponse.class).getMappedResults();
         return new PageImpl<>(mappedResults, pageable, count);
-
-
     }
 }
