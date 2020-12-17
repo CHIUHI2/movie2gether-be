@@ -98,6 +98,6 @@ public class SessionService {
     }
 
     public List<Session> findByMovieId(String movieId) {
-        return sessionRepository.findByMovieId(movieId);
+        return sessionRepository.findAllByMovieId(new ObjectId(movieId));
     }
 }
