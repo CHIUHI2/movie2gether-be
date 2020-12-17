@@ -1,7 +1,10 @@
 package com.bootcamp.movie2gether.movie.integration;
 
 import com.bootcamp.movie2gether.movie.dto.BookingRequest;
-import com.bootcamp.movie2gether.movie.entity.*;
+import com.bootcamp.movie2gether.movie.entity.Cinema;
+import com.bootcamp.movie2gether.movie.entity.Movie;
+import com.bootcamp.movie2gether.movie.entity.Seat;
+import com.bootcamp.movie2gether.movie.entity.Session;
 import com.bootcamp.movie2gether.movie.repository.BookingRepository;
 import com.bootcamp.movie2gether.movie.repository.CinemaRepository;
 import com.bootcamp.movie2gether.movie.repository.MovieRepository;
@@ -25,7 +28,6 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -150,9 +152,10 @@ public class BookingIntegrationTest {
 
     @Test
     @WithMockUser(value = "spring")
-    void should_return_booking_with_session_detail_when_get_booking_with_userId() throws Exception {
+    void should_return_booking_summary_grouped_by_session_when_get_booking_with_userId() throws Exception {
         //given
-        Movie movie = movieRepository.save(Movie.builder().title("Tenet").build());
+        Movie movie1 = movieRepository.save(Movie.builder().title("Tenet").build());
+        Movie movie2 = movieRepository.save(Movie.builder().title("Interstellar").build());
         Cinema cinema = cinemaRepository.save(Cinema.builder().seats(IntStream.range(0, 10)
                 .mapToObj(i -> new Seat(String.format("A%d", i)))
                 .collect(Collectors.toList()))
@@ -161,10 +164,12 @@ public class BookingIntegrationTest {
         );
         LocalDateTime startTime = LocalDateTime.now();
         LocalDateTime endTime = LocalDateTime.now().plus(Duration.ofHours(2));
-        Session session = sessionRepository.save(Session.builder().cinemaId(cinema.getId()).movieId(movie.getId()).startTime(startTime).endTime(endTime).build());
+        Session session1 = sessionRepository.save(Session.builder().cinemaId(cinema.getId()).movieId(movie1.getId()).startTime(startTime).endTime(endTime).build());
+        Session session2 = sessionRepository.save(Session.builder().cinemaId(cinema.getId()).movieId(movie2.getId()).startTime(startTime).endTime(endTime).build());
         User user = userRepository.save(new User("spring", "spring@mail.com", "lmao"));
-        List<Booking> bookings = bookingService.book(user.getId(), session.getId(), Collections.singletonList("A2"));
-        bookingService.book(user.getId(), session.getId(), Collections.singletonList("A3"));
+        bookingService.book(user.getId(), session1.getId(), Arrays.asList("A1", "A2", "A3"));
+        bookingService.book(user.getId(), session2.getId(), Collections.singletonList("A4"));
+        bookingService.book(user.getId(), session2.getId(), Arrays.asList("A1", "A2", "A3"));
         //when
         //then
         mockMvc.perform(
@@ -173,15 +178,14 @@ public class BookingIntegrationTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.totalElements").value(2))
                 .andExpect(jsonPath("$.content", hasSize(2)))
-                .andExpect(jsonPath("$.content.[0].id").value(bookings.get(0).getId().toHexString()))
-                .andExpect(jsonPath("$.content.[0].seatNumber").value(bookings.get(0).getSeatNumber()))
-                .andExpect(jsonPath("$.content.[0].userId").value(user.getId().toHexString()))
-                .andExpect(jsonPath("$.content.[0].sessionDetail.movie.id").value(movie.getId().toHexString()))
-                .andExpect(jsonPath("$.content.[0].sessionDetail.movie.title").value(movie.getTitle()))
+                .andExpect(jsonPath("$.content.[0].id").value(session2.getId().toHexString()))
+                .andExpect(jsonPath("$.content.[0].seatNumbers", hasSize(4)))
+                .andExpect(jsonPath("$.content.[0].sessionDetail.movie.id").value(movie2.getId().toHexString()))
+                .andExpect(jsonPath("$.content.[0].sessionDetail.movie.title").value(movie2.getTitle()))
                 .andExpect(jsonPath("$.content.[0].sessionDetail.cinema.id").value(cinema.getId().toHexString()))
                 .andExpect(jsonPath("$.content.[0].sessionDetail.cinema.name").value(cinema.getName()))
                 .andExpect(jsonPath("$.content.[0].sessionDetail.cinema.seats", hasSize(cinema.getSeats().size())))
-                .andExpect(jsonPath("$.content.[0].sessionDetail.bookings", hasSize(2)))
+                .andExpect(jsonPath("$.content.[0].sessionDetail.bookings", hasSize(4)))
                 .andExpect(jsonPath("$.content.[0].sessionDetail.startTime", startsWith(startTime.format(DateTimeFormatter.ofPattern("uuuu-MM-dd'T'HH:mm:ss")))))
                 .andExpect(jsonPath("$.content.[0].sessionDetail.endTime", startsWith(endTime.format(DateTimeFormatter.ofPattern("uuuu-MM-dd'T'HH:mm:ss")))))
         ;

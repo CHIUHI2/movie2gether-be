@@ -5,13 +5,14 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class BookingDetail {
+public class SessionBookingDetail {
     private String id;
-    private String userId;
-    private String seatNumber;
+    private List<String> seatNumbers;
     private SessionDetail sessionDetail;
 }

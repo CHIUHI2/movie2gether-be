@@ -1,6 +1,6 @@
 package com.bootcamp.movie2gether.movie.service;
 
-import com.bootcamp.movie2gether.movie.dto.BookingDetail;
+import com.bootcamp.movie2gether.movie.dto.SessionBookingDetail;
 import com.bootcamp.movie2gether.movie.entity.Booking;
 import com.bootcamp.movie2gether.movie.entity.Cinema;
 import com.bootcamp.movie2gether.movie.entity.Session;
@@ -63,11 +63,11 @@ public class BookingService {
         }
     }
 
-    public Page<BookingDetail> getPagedBookingDetailsByUserId(ObjectId userId, Integer page, Integer pageSize) {
+    public Page<SessionBookingDetail> getPagedSessionBookingDetailByUserId(ObjectId userId, Integer page, Integer pageSize) {
         Pageable pageable = PageRequest.of(page, pageSize, Sort.by("sessionDetail.startTime").descending());
-        List<BookingDetail> bookingDetailsByUserId = bookingRepository.getBookingDetailsByUserId(userId.toHexString(), pageable);
-        Long count = bookingRepository.countBookingDetailsByUserId(userId.toHexString());
-        return new PageImpl<>(bookingDetailsByUserId, pageable, count);
+        List<SessionBookingDetail> sessionBookingDetailsByUserId = bookingRepository.getSessionBookingDetailByUserId(userId.toHexString(), pageable);
+        Long count = bookingRepository.countSessionBookingDetailByUserId(userId.toHexString());
+        return new PageImpl<>(sessionBookingDetailsByUserId, pageable, count);
 
     }
 }

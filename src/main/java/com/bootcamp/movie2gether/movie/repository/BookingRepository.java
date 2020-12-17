@@ -1,6 +1,6 @@
 package com.bootcamp.movie2gether.movie.repository;
 
-import com.bootcamp.movie2gether.movie.dto.BookingDetail;
+import com.bootcamp.movie2gether.movie.dto.SessionBookingDetail;
 import com.bootcamp.movie2gether.movie.entity.Booking;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.repository.Aggregation;
@@ -15,6 +15,7 @@ public interface BookingRepository extends MongoRepository<Booking, String> {
 
     @Aggregation(pipeline ={
             "{$match: {userId: ObjectId(?0)}}",
+            "{$group: {_id: \"$sessionId\",sessionId: {$first: \"$sessionId\"},seatNumbers: {$addToSet: \"$seatNumber\"}}}",
             "{$lookup: {from: 'session',localField: 'sessionId',foreignField: '_id',as: 'sessionDetail'}}",
             "{$addFields: {sessionDetail: {$arrayElemAt: [\"$sessionDetail\", 0]}}}",
             "{$lookup: {from: 'cinema',localField: 'sessionDetail.cinemaId',foreignField: '_id',as: 'sessionDetail.cinema'}}",
@@ -23,11 +24,12 @@ public interface BookingRepository extends MongoRepository<Booking, String> {
             "{$addFields: {\"sessionDetail.movie\": {$arrayElemAt: [\"$sessionDetail.movie\", 0]}}}",
             "{$lookup: {from: 'booking',localField: 'sessionId',foreignField: 'sessionId',as: 'sessionDetail.bookings'}}",
     })
-    List<BookingDetail> getBookingDetailsByUserId(String userId, Pageable pageable);
+    List<SessionBookingDetail> getSessionBookingDetailByUserId(String userId, Pageable pageable);
 
     @Aggregation(pipeline = {
             "{$match: {userId: ObjectId(?0)}}",
+            "{$group: {_id: \"$sessionId\",sessionId: {$first: \"$sessionId\"},seatNumbers: {$addToSet: \"$seatNumber\"}}}",
             "{$count: 'count'}",
     })
-    Long countBookingDetailsByUserId(String userId);
+    Long countSessionBookingDetailByUserId(String userId);
 }
