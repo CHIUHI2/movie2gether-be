@@ -8,6 +8,7 @@ import com.bootcamp.movie2gether.user.exceptions.FriendRequestActionInvalidExcep
 import com.bootcamp.movie2gether.user.exceptions.UserNotFoundException;
 import com.bootcamp.movie2gether.user.mapper.UserMapper;
 import com.bootcamp.movie2gether.user.service.UserService;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -56,7 +57,7 @@ public class UserController {
     }
 
     @PatchMapping("/{id}/friends")
-    public User friendsAction(FriendRequest friendRequest) throws UserNotFoundException, FriendRequestActionInvalidException {
+    public User friendsAction(@RequestBody FriendRequest friendRequest) throws UserNotFoundException, FriendRequestActionInvalidException {
         String action = friendRequest.getAction();
 
         if(FRIEND_REQUEST_ACTION_ADD_FRIEND.equalsIgnoreCase(action)) {
