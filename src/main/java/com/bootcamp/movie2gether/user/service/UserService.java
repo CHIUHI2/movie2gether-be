@@ -1,5 +1,6 @@
 package com.bootcamp.movie2gether.user.service;
 
+import com.bootcamp.movie2gether.user.dto.FriendRequest;
 import com.bootcamp.movie2gether.user.dto.RegisterRequest;
 import com.bootcamp.movie2gether.user.entity.User;
 import com.bootcamp.movie2gether.user.exceptions.EmptyInputException;
@@ -7,10 +8,12 @@ import com.bootcamp.movie2gether.user.exceptions.UserNotFoundException;
 import com.bootcamp.movie2gether.user.exceptions.WeakPasswordException;
 import com.bootcamp.movie2gether.user.exceptions.WrongEmailFormatException;
 import com.bootcamp.movie2gether.user.repository.UserRepository;
-import com.bootcamp.movie2gether.user.security.service.UserDetailsImpl;
+import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
+import java.util.Set;
 
 @Service
 public class UserService {
@@ -40,9 +43,53 @@ public class UserService {
 
     }
 
-    public UserDetails findUserById(String id) throws UserNotFoundException {
-        User user = userRepository.findById(id).orElseThrow(UserNotFoundException::new);
+    public User findById(String id) throws UserNotFoundException {
+        return userRepository.findById(id).orElseThrow(UserNotFoundException::new);
+    }
 
-        return UserDetailsImpl.build(user);
+    public User addFriend(FriendRequest friendRequest) throws UserNotFoundException {
+        Optional<User> userOptional = userRepository.findById(friendRequest.getId());
+        Optional<User> targetUserOptional = userRepository.findByUserName(friendRequest.getTargetUserName());
+        if(!userOptional.isPresent() || !targetUserOptional.isPresent()) {
+            throw new UserNotFoundException();
+        }
+
+        User user = userOptional.get();
+        User targetUser = targetUserOptional.get();
+
+        Set<ObjectId> userFriendIdSet = user.getFriends();
+        userFriendIdSet.add(targetUser.getId());
+        user.setFriends(userFriendIdSet);
+
+        Set<ObjectId> targetUserFriendIdSet = user.getFriends();
+        targetUserFriendIdSet.add(user.getId());
+        targetUser.setFriends(targetUserFriendIdSet);
+
+        userRepository.save(targetUser);
+
+        return userRepository.save(user);
+    }
+
+    public User removeFriend(FriendRequest friendRequest) throws UserNotFoundException {
+        Optional<User> userOptional = userRepository.findById(friendRequest.getId());
+        Optional<User> targetUserOptional = userRepository.findByUserName(friendRequest.getTargetUserName());
+        if(!userOptional.isPresent() || !targetUserOptional.isPresent()) {
+            throw new UserNotFoundException();
+        }
+
+        User user = userOptional.get();
+        User targetUser = targetUserOptional.get();
+
+        Set<ObjectId> userFriendIdSet = user.getFriends();
+        userFriendIdSet.remove(targetUser.getId());
+        user.setFriends(userFriendIdSet);
+
+        Set<ObjectId> targetUserFriendIdSet = user.getFriends();
+        targetUserFriendIdSet.remove(user.getId());
+        targetUser.setFriends(targetUserFriendIdSet);
+
+        userRepository.save(targetUser);
+
+        return userRepository.save(user);
     }
 }
