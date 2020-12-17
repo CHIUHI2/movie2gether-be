@@ -8,12 +8,12 @@ import com.bootcamp.movie2gether.user.exceptions.FriendRequestActionInvalidExcep
 import com.bootcamp.movie2gether.user.exceptions.UserNotFoundException;
 import com.bootcamp.movie2gether.user.mapper.UserMapper;
 import com.bootcamp.movie2gether.user.service.UserService;
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -57,14 +57,14 @@ public class UserController {
     }
 
     @PatchMapping("/{id}/friends")
-    public User friendsAction(@RequestBody FriendRequest friendRequest) throws UserNotFoundException, FriendRequestActionInvalidException {
+    public UserProfileResponse friendsAction(@RequestBody FriendRequest friendRequest, @PathVariable String id) throws UserNotFoundException, FriendRequestActionInvalidException {
         String action = friendRequest.getAction();
 
         if(FRIEND_REQUEST_ACTION_ADD_FRIEND.equalsIgnoreCase(action)) {
-            return userService.addFriend(friendRequest);
+            return userMapper.toUserProfileResponse(userService.addFriend(friendRequest, id));
         }
         else if(FRIEND_REQUEST_ACTION_UNFRIEND.equalsIgnoreCase(action)) {
-            return userService.removeFriend(friendRequest);
+            return userMapper.toUserProfileResponse(userService.removeFriend(friendRequest, id));
         }
         else {
             throw new FriendRequestActionInvalidException();

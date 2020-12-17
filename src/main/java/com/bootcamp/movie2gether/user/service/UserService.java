@@ -48,8 +48,8 @@ public class UserService {
         return userRepository.findById(id).orElseThrow(UserNotFoundException::new);
     }
 
-    public User addFriend(FriendRequest friendRequest) throws UserNotFoundException {
-        Optional<User> userOptional = userRepository.findById(friendRequest.getId());
+    public User addFriend(FriendRequest friendRequest, String id) throws UserNotFoundException {
+        Optional<User> userOptional = userRepository.findById(id);
         Optional<User> targetUserOptional = userRepository.findByUserName(friendRequest.getTargetUserName());
         if(!userOptional.isPresent() || !targetUserOptional.isPresent()) {
             throw new UserNotFoundException();
@@ -71,8 +71,8 @@ public class UserService {
         return userRepository.save(user);
     }
 
-    public User removeFriend(FriendRequest friendRequest) throws UserNotFoundException {
-        Optional<User> userOptional = userRepository.findById(friendRequest.getId());
+    public User removeFriend(FriendRequest friendRequest, String id) throws UserNotFoundException {
+        Optional<User> userOptional = userRepository.findById(id);
         Optional<User> targetUserOptional = userRepository.findByUserName(friendRequest.getTargetUserName());
         if(!userOptional.isPresent() || !targetUserOptional.isPresent()) {
             throw new UserNotFoundException();

@@ -72,10 +72,10 @@ public class UserServiceTest {
         when(userRepository.save(targetUser)).thenReturn(targetUser);
         when(userRepository.save(user)).thenReturn(user);
 
-        FriendRequest friendRequest = new FriendRequest("1", "test", "ADD_FRIEND");
+        FriendRequest friendRequest = new FriendRequest("test", "ADD_FRIEND");
 
         //when
-        User returnedUser = userService.addFriend(friendRequest);
+        User returnedUser = userService.addFriend(friendRequest, "1");
 
         //then
         assertEquals(user, returnedUser);
@@ -89,12 +89,12 @@ public class UserServiceTest {
         when(userRepository.findById("1")).thenReturn(Optional.of(user));
         when(userRepository.findByUserName("test")).thenReturn(Optional.empty());
 
-        FriendRequest friendRequest = new FriendRequest("1", "test", "ADD_FRIEND");
+        FriendRequest friendRequest = new FriendRequest("test", "ADD_FRIEND");
 
         //then
         assertThrows(UserNotFoundException.class, () -> {
             //when
-            userService.addFriend(friendRequest);
+            userService.addFriend(friendRequest, "1");
         });
     }
 
@@ -106,12 +106,12 @@ public class UserServiceTest {
         when(userRepository.findById("1")).thenReturn(Optional.empty());
         when(userRepository.findByUserName("test")).thenReturn(Optional.of(targetUser));
 
-        FriendRequest friendRequest = new FriendRequest("1", "test", "ADD_FRIEND");
+        FriendRequest friendRequest = new FriendRequest("test", "ADD_FRIEND");
 
         //then
         assertThrows(UserNotFoundException.class, () -> {
             //when
-            userService.addFriend(friendRequest);
+            userService.addFriend(friendRequest, "1");
         });
     }
 
@@ -133,10 +133,10 @@ public class UserServiceTest {
         when(userRepository.save(targetUser)).thenReturn(targetUser);
         when(userRepository.save(user)).thenReturn(user);
 
-        FriendRequest friendRequest = new FriendRequest("1", "test", "UNFRIEND");
+        FriendRequest friendRequest = new FriendRequest("test", "UNFRIEND");
 
         //when
-        User returnedUser = userService.removeFriend(friendRequest);
+        User returnedUser = userService.removeFriend(friendRequest, "1");
 
         //then
         assertEquals(user, returnedUser);
@@ -150,12 +150,12 @@ public class UserServiceTest {
         when(userRepository.findById("1")).thenReturn(Optional.of(user));
         when(userRepository.findByUserName("test")).thenReturn(Optional.empty());
 
-        FriendRequest friendRequest = new FriendRequest("1", "test", "ADD_FRIEND");
+        FriendRequest friendRequest = new FriendRequest("test", "ADD_FRIEND");
 
         //then
         assertThrows(UserNotFoundException.class, () -> {
             //when
-            userService.removeFriend(friendRequest);
+            userService.removeFriend(friendRequest, "1");
         });
     }
 
@@ -167,12 +167,12 @@ public class UserServiceTest {
         when(userRepository.findById("1")).thenReturn(Optional.empty());
         when(userRepository.findByUserName("test")).thenReturn(Optional.of(targetUser));
 
-        FriendRequest friendRequest = new FriendRequest("1", "test", "ADD_FRIEND");
+        FriendRequest friendRequest = new FriendRequest("test", "ADD_FRIEND");
 
         //then
         assertThrows(UserNotFoundException.class, () -> {
             //when
-            userService.removeFriend(friendRequest);
+            userService.removeFriend(friendRequest, "1");
         });
     }
 }
