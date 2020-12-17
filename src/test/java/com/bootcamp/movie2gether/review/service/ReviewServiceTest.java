@@ -1,7 +1,11 @@
 package com.bootcamp.movie2gether.review.service;
 
+import com.bootcamp.movie2gether.movie.exception.MovieNotFoundException;
+import com.bootcamp.movie2gether.movie.repository.MovieRepository;
+import com.bootcamp.movie2gether.review.dto.ReviewResponse;
 import com.bootcamp.movie2gether.review.entity.Review;
 import com.bootcamp.movie2gether.review.repository.ReviewRepository;
+import org.bson.types.ObjectId;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -9,7 +13,12 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
+import java.util.Collections;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -26,6 +35,8 @@ public class ReviewServiceTest {
     private ReviewService reviewService;
     @Mock
     ReviewRepository reviewRepository;
+    @Mock
+    MovieRepository movieRepository;
 
     @Test
     public void should_return_review_from_a_specific_user_of_a_specific_movie_when_get_by_movieId_and_userId_given_movieId_and_userId() {
@@ -68,5 +79,38 @@ public class ReviewServiceTest {
 
         //then
         assertEquals(updatedReview, review);
+    }
+
+    @Test
+    public void should_return_review_page_when_get_by_movie_id_with_pagination_given_existed_movie_id_page_size_5_page_1() throws MovieNotFoundException {
+        //given
+        ObjectId movieId = new ObjectId();
+        Review review = new Review();
+        Pageable pageable = PageRequest.of(1, 5);
+        Page<Review> expectedReviewPage = new PageImpl<>(Collections.singletonList(review), pageable, 1);
+
+        when(movieRepository.existsById(movieId.toString())).thenReturn(true);
+        when(reviewRepository.findByMovieId(movieId, pageable)).thenReturn(expectedReviewPage);
+
+        //when
+        Page<Review> reviewPage = reviewService.getByMovieIdWithPagination(movieId.toString(), pageable);
+
+        //then
+        assertEquals(expectedReviewPage, reviewPage);
+    }
+
+    @Test
+    public void should_throw_movie_not_found_exception_when_get_by_movie_id_give_pagination_given_not_existed_movie_id_page_size_5_page_1() {
+        //given
+        ObjectId movieId = new ObjectId();
+        Pageable pageable = PageRequest.of(1, 5);
+
+        when(movieRepository.existsById(movieId.toString())).thenReturn(false);
+
+        //when
+        assertThrows(MovieNotFoundException.class, () -> {
+            //then
+            reviewService.getByMovieIdWithPagination(movieId.toString(), pageable);
+        });
     }
 }

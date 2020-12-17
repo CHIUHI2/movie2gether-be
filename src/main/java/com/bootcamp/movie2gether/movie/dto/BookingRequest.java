@@ -5,11 +5,14 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class BookingRequest {
-    private String seatNumber;
+    private String userId;
+    private List<String> seatNumbers;
     private String sessionId;
 }

@@ -13,6 +13,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Controller
 @RequestMapping("/bookings")
 @ResponseBody
@@ -25,12 +28,17 @@ public class BookingController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    BookingResponse book(@RequestBody BookingRequest bookingRequest) throws AlreadyBookedException {
-        return bookingMapper.toResponse(
-                bookingService.book(new ObjectId(),
-                        new ObjectId(bookingRequest.getSessionId()),
-                        bookingRequest.getSeatNumber())
-        );
+    List<BookingResponse> book(@RequestBody BookingRequest bookingRequest) throws AlreadyBookedException {
+        if (bookingRequest.getUserId() == null || bookingRequest.getSessionId() == null || bookingRequest.getSeatNumbers() == null)
+            throw new IllegalArgumentException("Invalid BookingRequest");
+        return bookingService.book(
+                new ObjectId(bookingRequest.getUserId()),
+                new ObjectId(bookingRequest.getSessionId()),
+                bookingRequest.getSeatNumbers()
+        )
+                .stream()
+                .map(booking -> bookingMapper.toResponse(booking))
+                .collect(Collectors.toList());
     }
 
     @GetMapping

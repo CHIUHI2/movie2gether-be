@@ -16,6 +16,6 @@ public class MovieDetailResponse {
     private String title;
     private Float voteAverage;
     private String posterUrl;
-    private Boolean onShow;
+    private boolean isOnShow;
     private List<String> genres;
 }

@@ -68,7 +68,8 @@ public class CinemaService {
         Aggregation countAggregation = Aggregation.newAggregation(countPipeline);
 
         List<Cinema> cinemas = mongoTemplate.aggregate(dataAggregation, "cinema", Cinema.class).getMappedResults();
-        long count = Long.parseLong(mongoTemplate.aggregate(countAggregation, "cinema", Document.class).getMappedResults().get(0).get("count").toString());
+        List<Document> countResult = mongoTemplate.aggregate(countAggregation, "cinema", Document.class).getMappedResults();
+        long count = countResult.size() > 0 ? Long.parseLong(countResult.get(0).get("count").toString()) : 0;
 
         return new PageImpl<>(cinemas, pageable, count);
     }

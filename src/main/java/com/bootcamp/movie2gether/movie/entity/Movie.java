@@ -31,6 +31,5 @@ public class Movie {
     private String title;
     private Float voteAverage;
     private String posterUrl;
-    private Boolean onShow;
     private List<String> genres;
 }

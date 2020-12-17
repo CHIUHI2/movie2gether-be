@@ -1,19 +1,12 @@
 package com.bootcamp.movie2gether.advice;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+
+@Data
+@AllArgsConstructor
 public class ErrorResponse {
-    private String status;
-    private String message;
+    private final String status;
+    private final String message;
 
-    public ErrorResponse(String status, String message) {
-        this.status = status;
-        this.message = message;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public String getMessage() {
-        return message;
-    }
 }
