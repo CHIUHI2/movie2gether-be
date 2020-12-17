@@ -1,5 +1,7 @@
 package com.bootcamp.movie2gether.review.integration;
 
+import com.bootcamp.movie2gether.movie.entity.Movie;
+import com.bootcamp.movie2gether.movie.repository.MovieRepository;
 import com.bootcamp.movie2gether.review.entity.Review;
 import com.bootcamp.movie2gether.review.repository.ReviewRepository;
 import org.bson.types.ObjectId;
@@ -11,6 +13,11 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.http.MediaType;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.hamcrest.Matchers.hasSize;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -24,9 +31,13 @@ public class ReviewIntegrationTest {
     @Autowired
     private ReviewRepository reviewRepository;
 
+    @Autowired
+    private MovieRepository movieRepository;
+
     @AfterEach
     void tearDown(){
         reviewRepository.deleteAll();
+        movieRepository.deleteAll();
     }
 
     @Test
@@ -116,4 +127,41 @@ public class ReviewIntegrationTest {
 
     }
 
+    @Test
+    @WithMockUser(value = "spring")
+    public void should_return_one_review_when_get_review_by_movie_id_with_pagination_given_existed_movie_id_page() throws Exception {
+        //given
+        Movie movie = new Movie();
+        movie = movieRepository.insert(movie);
+
+        List<Review> reviews = new ArrayList<>();
+        for(int index = 0; index < 6 ; index++) {
+            Review review = new Review();
+            review.setMovieId(movie.getId());
+            review.setUserId(new ObjectId());
+            review = reviewRepository.insert(review);
+            reviews.add(review);
+        }
+
+        //when
+        //then
+        mockMvc.perform(get("/reviews")
+                .param("movieId", movie.getId().toString())
+                .param("page", "2"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.content", hasSize(1)))
+                .andExpect(jsonPath("$.content[0].id").value(reviews.get(5).getId().toString()));
+    }
+
+    @Test
+    @WithMockUser(value = "spring")
+    public void should_return_404_when_get_review_by_movie_id_with_pagination_given_not_existed_movie_id_page() throws Exception {
+        //given
+        //when
+        //then
+        mockMvc.perform(get("/reviews")
+                .param("movieId", (new ObjectId()).toString())
+                .param("page", "2"))
+                .andExpect(status().isNotFound());
+    }
 }
