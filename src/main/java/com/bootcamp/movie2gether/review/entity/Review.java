@@ -26,6 +26,8 @@ public class Review {
     @JsonSerialize(using = ToStringSerializer.class)
     private ObjectId id;
     @JsonSerialize(using = ToStringSerializer.class)
+    private ObjectId sessionId;
+    @JsonSerialize(using = ToStringSerializer.class)
     private ObjectId userId;
     @JsonSerialize(using = ToStringSerializer.class)
     private ObjectId movieId;

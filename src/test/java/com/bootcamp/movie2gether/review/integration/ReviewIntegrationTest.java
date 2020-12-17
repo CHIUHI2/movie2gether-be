@@ -50,6 +50,7 @@ public class ReviewIntegrationTest {
     public void should_return_review_from_specific_user_of_specific_movie_when_get_review_given_userId_and_movieId() throws Exception {
         //given
         Review review = new Review();
+        review.setSessionId(new ObjectId("5fd9d86f03c5cf30ed507c59"));
         review.setMovieId(new ObjectId("5fd77c99e5f7d6417d7abac9"));
         review.setUserId(new ObjectId("5fd81ac741ea7016828cfd39"));
         review.setRating(4);
@@ -58,7 +59,7 @@ public class ReviewIntegrationTest {
 
         //when
         //then
-        mockMvc.perform(get("/reviews").param("movieId", "5fd77c99e5f7d6417d7abac9").param("userId","5fd81ac741ea7016828cfd39"))
+        mockMvc.perform(get("/reviews").param("sessionId", "5fd9d86f03c5cf30ed507c59").param("movieId", "5fd77c99e5f7d6417d7abac9").param("userId","5fd81ac741ea7016828cfd39"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.rating").value(4))
                 .andExpect(jsonPath("$.comment").value("funny movie"));
@@ -69,6 +70,7 @@ public class ReviewIntegrationTest {
     public void should_return_empty_review_response_when_get_review_given_invalid_userId_and_invalid_movieId() throws Exception {
         //given
         Review review = new Review();
+        review.setSessionId(new ObjectId("5fd9d86f03c5cf30ed507c59"));
         review.setMovieId(new ObjectId("5fd77c99e5f7d6417d7abac9"));
         review.setUserId(new ObjectId("5fd81ac741ea7016828cfd39"));
         review.setRating(4);
@@ -77,7 +79,7 @@ public class ReviewIntegrationTest {
 
         //when
         //then
-        mockMvc.perform(get("/reviews").param("movieId", "5fd77c99e5f7d6417d7abac1").param("userId","5fd81ac741ea7016828cfd31"))
+        mockMvc.perform(get("/reviews").param("sessionId", "5fd9d86f03c5cf30ed507c59").param("movieId", "5fd77c99e5f7d6417d7abac1").param("userId","5fd81ac741ea7016828cfd31"))
                 .andExpect(status().isOk());
     }
 
@@ -86,6 +88,7 @@ public class ReviewIntegrationTest {
     public void should_return_created_review_when_save_given_review() throws Exception {
         //given
         String reviewAsJson = "{\n" +
+                "    \"sessionId\": \"5fd9d86f03c5cf30ed507c59\",\n" +
                 "    \"userId\": \"5fd81ac741ea7016828cfd39\",\n" +
                 "    \"movieId\": \"5fd77c99e5f7d6417d7abac9\",\n" +
                 "    \"rating\": 5,\n" +
@@ -108,6 +111,7 @@ public class ReviewIntegrationTest {
     public void should_return_updated_review_when_update_given_review_id_and_review() throws Exception {
         //given
         Review review = new Review();
+        review.setSessionId(new ObjectId("5fd9d86f03c5cf30ed507c59"));
         review.setMovieId(new ObjectId("5fd77c99e5f7d6417d7abac9"));
         review.setUserId(new ObjectId("5fd81ac741ea7016828cfd39"));
         review.setRating(4);
@@ -115,6 +119,7 @@ public class ReviewIntegrationTest {
         reviewRepository.save(review);
 
         String updatedReviewAsJson = "{\n" +
+                "    \"sessionId\": \"5fd9d86f03c5cf30ed507c59\",\n" +
                 "    \"userId\": \"5fd81ac741ea7016828cfd40\",\n" +
                 "    \"movieId\": \"5fd77c99e5f7d6417d7abac4\",\n" +
                 "    \"rating\": 5,\n" +
@@ -142,6 +147,7 @@ public class ReviewIntegrationTest {
         List<Review> reviews = new ArrayList<>();
         for(int index = 0; index < 6 ; index++) {
             Review review = new Review();
+            review.setSessionId(new ObjectId());
             review.setMovieId(movie.getId());
             review.setUserId(new ObjectId());
             review.setLastModifiedAt(ZonedDateTime.now().plusHours(index));

@@ -13,6 +13,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class ReviewResponse {
     private String id;
+    private String sessionId;
     private String userId;
     private String userName;
     private String movieId;

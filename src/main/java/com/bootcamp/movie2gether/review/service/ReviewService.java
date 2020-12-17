@@ -36,6 +36,13 @@ public class ReviewService {
         return reviewRepository.findByMovieIdAndUserId(new ObjectId(movieId), new ObjectId(userId));
     }
 
+    public Review getBySessionIdAndMovieIdAndUserId(String sessionId, String movieId, String userId) {
+        if (!reviewRepository.existsBySessionIdAndMovieIdAndUserId(new ObjectId(sessionId), new ObjectId(movieId), new ObjectId(userId))) {
+            return null;
+        }
+        return reviewRepository.findBySessionIdAndMovieIdAndUserId(new ObjectId(sessionId), new ObjectId(movieId), new ObjectId(userId));
+    }
+
     public Review save(Review review) {
         ZonedDateTime currentDateTime = ZonedDateTime.now();
         review.setCreatedAt(currentDateTime);

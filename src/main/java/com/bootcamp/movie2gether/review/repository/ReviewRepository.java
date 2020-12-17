@@ -10,6 +10,8 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ReviewRepository extends MongoRepository<Review, ObjectId> {
     Review findByMovieIdAndUserId(ObjectId movieId, ObjectId userId);
+    Review findBySessionIdAndMovieIdAndUserId(ObjectId sessionId, ObjectId movieId, ObjectId userId);
     Page<Review> findByMovieId(ObjectId movieId, Pageable pageable);
     boolean existsByMovieIdAndUserId(ObjectId movieId,ObjectId userId);
+    boolean existsBySessionIdAndMovieIdAndUserId(ObjectId sessionId, ObjectId movieId,ObjectId userId);
 }
