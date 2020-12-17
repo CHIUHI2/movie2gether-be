@@ -47,7 +47,6 @@ public class MockMovieDataGenerator {
                 IntStream.range(0, 10)
                         .mapToObj(i -> Movie.builder()
                                 .title(String.format("Movie %d", i))
-                                .onShow(true)
                                 .popularity(50.0f)
                                 .releaseDate(ZonedDateTime.now().minusDays(10))
                                 .build())

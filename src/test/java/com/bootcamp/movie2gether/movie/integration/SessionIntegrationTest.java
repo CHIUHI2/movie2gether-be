@@ -67,7 +67,7 @@ public class SessionIntegrationTest {
 //    @WithMockUser(value = "spring")
     void should_get_paged_session_details_when_get_sessions_given_20_movie_sessions() throws Exception {
         //given
-        Movie movie = movieRepository.save(Movie.builder().onShow(true).title("Interstellar").build());
+        Movie movie = movieRepository.save(Movie.builder().title("Interstellar").build());
         Cinema cinema = cinemaRepository.save(
                 Cinema.builder()
                         .seats(IntStream.range(0, 10)
@@ -114,8 +114,8 @@ public class SessionIntegrationTest {
     @WithMockUser(value = "spring")
     void should_get_filtered_sessions_when_get_sessions_with_movie_or_cinema_filter_options_given_sessions() throws Exception {
         //given
-        Movie movie1 = movieRepository.save(Movie.builder().onShow(true).title("Tenet").build());
-        Movie movie2 = movieRepository.save(Movie.builder().onShow(true).title("1917").build());
+        Movie movie1 = movieRepository.save(Movie.builder().title("Tenet").build());
+        Movie movie2 = movieRepository.save(Movie.builder().title("1917").build());
         Cinema cinemaA = cinemaRepository.save(Cinema.builder().seats(IntStream.range(0, 10)
                 .mapToObj(i -> new Seat(String.format("A%d", i)))
                 .collect(Collectors.toList()))
@@ -157,7 +157,7 @@ public class SessionIntegrationTest {
     @WithMockUser(value = "spring")
     void should_return_session_when_get_session_give_id() throws Exception {
         //given
-        Movie movie = movieRepository.save(Movie.builder().onShow(true).title("1917").build());
+        Movie movie = movieRepository.save(Movie.builder().title("1917").build());
         Cinema cinemaA = cinemaRepository.save(Cinema.builder().seats(IntStream.range(0, 10)
                 .mapToObj(i -> new Seat(String.format("A%d", i)))
                 .collect(Collectors.toList()))

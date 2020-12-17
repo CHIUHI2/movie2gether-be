@@ -68,7 +68,7 @@ public class BookingIntegrationTest {
     @WithMockUser(value = "spring")
     void should_return_booking_info_when_book_with_session_and_seat_given_available_seat() throws Exception {
         //given
-        Movie movie = movieRepository.save(Movie.builder().onShow(true).title("Tenet").build());
+        Movie movie = movieRepository.save(Movie.builder().title("Tenet").build());
         Cinema cinema = cinemaRepository.save(Cinema.builder().seats(IntStream.range(0, 10)
                 .mapToObj(i -> new Seat(String.format("A%d", i)))
                 .collect(Collectors.toList()))
@@ -105,7 +105,7 @@ public class BookingIntegrationTest {
     @WithMockUser(value = "spring")
     void should_return_booking_info_when_book_with_session_and_multiple_seats_given_available_seat() throws Exception {
         //given
-        Movie movie = movieRepository.save(Movie.builder().onShow(true).title("Tenet").build());
+        Movie movie = movieRepository.save(Movie.builder().title("Tenet").build());
         Cinema cinema = cinemaRepository.save(Cinema.builder().seats(IntStream.range(0, 10)
                 .mapToObj(i -> new Seat(String.format("A%d", i)))
                 .collect(Collectors.toList()))
@@ -152,7 +152,7 @@ public class BookingIntegrationTest {
     @WithMockUser(value = "spring")
     void should_return_booking_with_session_detail_when_get_booking_with_userId() throws Exception {
         //given
-        Movie movie = movieRepository.save(Movie.builder().onShow(true).title("Tenet").build());
+        Movie movie = movieRepository.save(Movie.builder().title("Tenet").build());
         Cinema cinema = cinemaRepository.save(Cinema.builder().seats(IntStream.range(0, 10)
                 .mapToObj(i -> new Seat(String.format("A%d", i)))
                 .collect(Collectors.toList()))
