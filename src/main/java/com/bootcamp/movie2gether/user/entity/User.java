@@ -1,6 +1,7 @@
 package com.bootcamp.movie2gether.user.entity;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.bson.types.ObjectId;
@@ -13,6 +14,7 @@ import org.springframework.data.mongodb.core.mapping.MongoId;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class User {
     @Id
     private ObjectId id;
@@ -20,16 +22,16 @@ public class User {
     private String email;
     private String password;
 
-//    public User(String userName, String email, String password){
-//        this.userName = userName;
-//        this.email = email;
-//        this.password = password;
-//    }
-//
-//    public User(String userName, String email){
-//        this.userName = userName;
-//        this.email = email;
-//    }
+    public User(String userName, String email, String password){
+        this.userName = userName;
+        this.email = email;
+        this.password = password;
+    }
+
+    public User(String userName, String email){
+        this.userName = userName;
+        this.email = email;
+    }
 
 //    public User(){}
 

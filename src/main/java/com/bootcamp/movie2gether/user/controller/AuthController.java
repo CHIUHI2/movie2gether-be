@@ -4,6 +4,7 @@ import com.bootcamp.movie2gether.user.dto.JwtResponse;
 import com.bootcamp.movie2gether.user.dto.LoginRequest;
 import com.bootcamp.movie2gether.user.dto.MessageResponse;
 import com.bootcamp.movie2gether.user.dto.RegisterRequest;
+
 import com.bootcamp.movie2gether.user.entity.User;
 import com.bootcamp.movie2gether.user.repository.UserRepository;
 import com.bootcamp.movie2gether.user.security.jwt.JwtUtils;
