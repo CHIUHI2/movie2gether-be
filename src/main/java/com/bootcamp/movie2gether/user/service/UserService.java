@@ -7,15 +7,25 @@ import com.bootcamp.movie2gether.user.exceptions.UserNotFoundException;
 import com.bootcamp.movie2gether.user.exceptions.WeakPasswordException;
 import com.bootcamp.movie2gether.user.exceptions.WrongEmailFormatException;
 import com.bootcamp.movie2gether.user.repository.UserRepository;
+<<<<<<< Updated upstream
 import com.bootcamp.movie2gether.user.security.service.UserDetailsImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
+=======
+import org.springframework.beans.factory.annotation.Autowired;
+>>>>>>> Stashed changes
 import org.springframework.stereotype.Service;
 
 @Service
 public class UserService {
+<<<<<<< Updated upstream
     @Autowired
     UserRepository userRepository;
+=======
+
+    @Autowired
+    private UserRepository userRepository;
+>>>>>>> Stashed changes
 
     public void validateRegistrationRequest(RegisterRequest registerRequest) {
         if (registerRequest.getUserName().isEmpty()) {
