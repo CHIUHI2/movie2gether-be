@@ -90,7 +90,7 @@ public class ReviewServiceTest {
         Page<Review> expectedReviewPage = new PageImpl<>(Collections.singletonList(review), pageable, 1);
 
         when(movieRepository.existsById(movieId.toString())).thenReturn(true);
-        when(reviewRepository.findByMovieId(movieId, pageable)).thenReturn(expectedReviewPage);
+        when(reviewRepository.findByMovieIdAndSessionIdNotNull(movieId, pageable)).thenReturn(expectedReviewPage);
 
         //when
         Page<Review> reviewPage = reviewService.getByMovieIdWithPagination(movieId.toString(), pageable);

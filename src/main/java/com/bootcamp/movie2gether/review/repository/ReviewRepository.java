@@ -14,4 +14,5 @@ public interface ReviewRepository extends MongoRepository<Review, ObjectId> {
     Page<Review> findByMovieId(ObjectId movieId, Pageable pageable);
     boolean existsByMovieIdAndUserId(ObjectId movieId,ObjectId userId);
     boolean existsBySessionIdAndMovieIdAndUserId(ObjectId sessionId, ObjectId movieId,ObjectId userId);
+    Page<Review> findByMovieIdAndSessionIdNotNull(ObjectId objectId, Pageable pageable);
 }
