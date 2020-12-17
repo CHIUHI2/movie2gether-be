@@ -96,4 +96,8 @@ public class SessionService {
             throw new NoSuchElementException();
 
     }
+
+    public List<Session> findByMovieId(String movieId) {
+        return sessionRepository.findAllByMovieId(new ObjectId(movieId));
+    }
 }

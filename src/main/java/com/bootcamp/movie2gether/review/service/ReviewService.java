@@ -26,7 +26,7 @@ public class ReviewService {
             throw new MovieNotFoundException();
         }
 
-        return  reviewRepository.findByMovieId(new ObjectId(movieId), pageable);
+        return  reviewRepository.findByMovieIdAndSessionIdNotNull(new ObjectId(movieId), pageable);
     }
 
     public Review getByMovieIdAndUserId(String movieId, String userId) {

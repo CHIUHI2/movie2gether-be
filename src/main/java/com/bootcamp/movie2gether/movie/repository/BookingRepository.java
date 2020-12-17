@@ -2,9 +2,11 @@ package com.bootcamp.movie2gether.movie.repository;
 
 import com.bootcamp.movie2gether.movie.dto.SessionBookingDetail;
 import com.bootcamp.movie2gether.movie.entity.Booking;
+import org.bson.types.ObjectId;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.repository.Aggregation;
 import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.data.mongodb.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -32,4 +34,7 @@ public interface BookingRepository extends MongoRepository<Booking, String> {
             "{$count: 'count'}",
     })
     Long countSessionBookingDetailByUserId(String userId);
+
+    @Query("{'sessionId' : {$in : ?0}}")
+    List<Booking> findBySessionIdList(List<ObjectId> sessionIdList);
 }

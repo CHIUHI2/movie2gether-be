@@ -69,4 +69,8 @@ public class BookingService {
         return new PageImpl<>(sessionBookingDetailsByUserId, pageable, count);
 
     }
+
+    public List<Booking> findBySessionIdList(List<ObjectId> sessionIdList) {
+        return bookingRepository.findBySessionIdList(sessionIdList);
+    }
 }
