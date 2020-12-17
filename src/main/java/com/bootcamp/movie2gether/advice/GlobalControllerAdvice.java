@@ -4,6 +4,7 @@ import com.bootcamp.movie2gether.movie.exception.AlreadyBookedException;
 import com.bootcamp.movie2gether.movie.exception.MovieNotFoundException;
 import com.bootcamp.movie2gether.user.exceptions.EmptyInputException;
 import com.bootcamp.movie2gether.user.exceptions.FriendRequestActionInvalidException;
+import com.bootcamp.movie2gether.user.exceptions.UserNotFoundException;
 import com.bootcamp.movie2gether.user.exceptions.WeakPasswordException;
 import com.bootcamp.movie2gether.user.exceptions.WrongEmailFormatException;
 import org.springframework.dao.DuplicateKeyException;
@@ -22,8 +23,11 @@ public class GlobalControllerAdvice {
     }
 
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    @ExceptionHandler({MovieNotFoundException.class})
-    public ErrorResponse handleMovieNotFoundException(MovieNotFoundException exception) {
+    @ExceptionHandler({
+            MovieNotFoundException.class,
+            UserNotFoundException.class
+    })
+    public ErrorResponse handleNotFoundException(Exception exception) {
         return new ErrorResponse(HttpStatus.NOT_FOUND.name(), exception.getMessage());
     }
 
@@ -46,7 +50,7 @@ public class GlobalControllerAdvice {
             IllegalArgumentException.class,
             FriendRequestActionInvalidException.class
     })
-    public ErrorResponse handleInputExceptions(Exception exception) {
+    public ErrorResponse handleBadRequestExceptions(Exception exception) {
         return new ErrorResponse(HttpStatus.BAD_REQUEST.name(), exception.getMessage());
     }
 }
