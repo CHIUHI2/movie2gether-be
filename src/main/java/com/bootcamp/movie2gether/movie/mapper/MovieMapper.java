@@ -17,7 +17,7 @@ public class MovieMapper {
 
         BeanUtils.copyProperties(movie, movieDetailResponse);
         movieDetailResponse.setId(movie.getId().toString());
-        movieDetailResponse.setOnShow(ZonedDateTime.now().isAfter(movie.getReleaseDate()));
+        movieDetailResponse.setOnShow(movie.getReleaseDate() != null && ZonedDateTime.now().isAfter(movie.getReleaseDate()));
 
         return movieDetailResponse;
     }
