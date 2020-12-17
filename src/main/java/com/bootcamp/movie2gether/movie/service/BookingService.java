@@ -8,7 +8,6 @@ import com.bootcamp.movie2gether.movie.exception.AlreadyBookedException;
 import com.bootcamp.movie2gether.movie.repository.BookingRepository;
 import com.bootcamp.movie2gether.movie.repository.CinemaRepository;
 import com.bootcamp.movie2gether.movie.repository.SessionRepository;
-import com.bootcamp.movie2gether.user.entity.User;
 import com.bootcamp.movie2gether.user.repository.UserRepository;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,7 +40,7 @@ public class BookingService {
 
     @Transactional
     public List<Booking> book(ObjectId userId, ObjectId sessionId, List<String> seatNumbers) throws AlreadyBookedException {
-        User user = userRepository.findById(userId.toHexString()).orElseThrow(() -> new IllegalArgumentException("Invalid userId"));
+        userRepository.findById(userId.toHexString()).orElseThrow(() -> new IllegalArgumentException("Invalid userId"));
         Session session = sessionRepository.findById(sessionId.toHexString()).orElseThrow(() -> new IllegalArgumentException("Invalid sessionId"));
         Cinema cinema = cinemaRepository.findById(session.getCinemaId().toHexString()).orElseThrow(() -> new IllegalStateException(String.format("Session %s pointing to invalid cinema", session.getId().toHexString())));
         if (!seatNumbers.stream().allMatch(seatNumber -> cinema.getSeats().stream().anyMatch(seat -> seat.getNumber().equals(seatNumber))))
