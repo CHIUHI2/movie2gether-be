@@ -17,6 +17,7 @@ import org.springframework.data.domain.*;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
 import org.springframework.data.mongodb.core.aggregation.AggregationOperation;
+import org.springframework.data.mongodb.core.aggregation.Fields;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
@@ -74,6 +75,7 @@ public class BookingService {
         Pageable pageable = PageRequest.of(page, pageSize);
         List<AggregationOperation> aggregationOperations =
                 Arrays.asList(match(Criteria.where("userId").is(userId)),
+                       group("sessionId").first("$sessionId").as("sessionId"),
                         lookup("session", "sessionId", "_id", "sessionDetail"),
                         unwind("$sessionDetail"),
                         lookup("cinema", "sessionDetail.cinemaId", "_id", "sessionDetail.cinema"),
@@ -82,6 +84,7 @@ public class BookingService {
                         unwind("$sessionDetail.cinema"),
                         unwind("$sessionDetail.movie"),
                         sort(Sort.Direction.ASC, "sessionDetail.startTime"),
+                        //group(Fields.from(Fields.field("_id", "sessionId"))),
                         skip((long) pageSize * page),
                         limit(pageSize)
                 );

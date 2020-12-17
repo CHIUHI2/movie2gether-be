@@ -12,6 +12,7 @@ public class ReviewMapper {
     public Review toEntity(ReviewRequest reviewRequest){
         Review review = new Review();
         BeanUtils.copyProperties(reviewRequest, review);
+        review.setSessionId(new ObjectId(reviewRequest.getSessionId()));
         review.setUserId(new ObjectId(reviewRequest.getUserId()));
         review.setMovieId(new ObjectId(reviewRequest.getMovieId()));
         return review;
@@ -24,6 +25,7 @@ public class ReviewMapper {
         ReviewResponse reviewResponse = new ReviewResponse();
         BeanUtils.copyProperties(review, reviewResponse);
         reviewResponse.setId(review.getId().toString());
+        reviewResponse.setSessionId(review.getSessionId().toString());
         reviewResponse.setMovieId(review.getMovieId().toString());
         reviewResponse.setUserId(review.getUserId().toString());
         return reviewResponse;

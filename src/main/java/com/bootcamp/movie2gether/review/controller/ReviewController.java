@@ -65,6 +65,11 @@ public class ReviewController {
         return reviewMapper.toResponse(reviewService.getByMovieIdAndUserId(movieId,userId));
     }
 
+    @GetMapping(params={"sessionId","movieId", "userId"})
+    public ReviewResponse getBySessionIdAndMovieIdAndUserId(@RequestParam String sessionId, @RequestParam String movieId, @RequestParam String userId){
+        return reviewMapper.toResponse(reviewService.getBySessionIdAndMovieIdAndUserId(sessionId,movieId,userId));
+    }
+
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public ReviewResponse save(@RequestBody ReviewRequest reviewRequest){

@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ReviewRequest {
+    private String sessionId;
     private String userId;
     private String movieId;
     private Integer rating;
