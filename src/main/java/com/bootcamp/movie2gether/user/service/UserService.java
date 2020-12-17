@@ -12,6 +12,7 @@ import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
@@ -57,11 +58,11 @@ public class UserService {
         User user = userOptional.get();
         User targetUser = targetUserOptional.get();
 
-        Set<ObjectId> userFriendIdSet = user.getFriends();
+        Set<ObjectId> userFriendIdSet = new HashSet<>(user.getFriends());
         userFriendIdSet.add(targetUser.getId());
         user.setFriends(userFriendIdSet);
 
-        Set<ObjectId> targetUserFriendIdSet = user.getFriends();
+        Set<ObjectId> targetUserFriendIdSet = new HashSet<>(targetUser.getFriends());
         targetUserFriendIdSet.add(user.getId());
         targetUser.setFriends(targetUserFriendIdSet);
 
@@ -80,11 +81,11 @@ public class UserService {
         User user = userOptional.get();
         User targetUser = targetUserOptional.get();
 
-        Set<ObjectId> userFriendIdSet = user.getFriends();
+        Set<ObjectId> userFriendIdSet = new HashSet<>(user.getFriends());
         userFriendIdSet.remove(targetUser.getId());
         user.setFriends(userFriendIdSet);
 
-        Set<ObjectId> targetUserFriendIdSet = user.getFriends();
+        Set<ObjectId> targetUserFriendIdSet = new HashSet<>(targetUser.getFriends());
         targetUserFriendIdSet.remove(user.getId());
         targetUser.setFriends(targetUserFriendIdSet);
 

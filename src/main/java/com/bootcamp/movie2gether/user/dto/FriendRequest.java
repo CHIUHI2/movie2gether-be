@@ -11,6 +11,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class FriendRequest {
     private String id;
-    private String TargetUserName;
+    private String targetUserName;
     private String action;
 }

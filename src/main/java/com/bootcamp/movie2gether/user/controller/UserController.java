@@ -50,7 +50,7 @@ public class UserController {
 
 
         UserProfileResponse userProfileResponse = userMapper.toUserProfileResponse(user);
-        userProfileResponse.setFriendList(friendList);
+        userProfileResponse.setFriends(friendList);
 
         return userProfileResponse;
     }
