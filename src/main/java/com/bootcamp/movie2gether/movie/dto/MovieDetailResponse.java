@@ -1,5 +1,6 @@
 package com.bootcamp.movie2gether.movie.dto;
 
+import com.bootcamp.movie2gether.user.dto.UserProfileResponse;
 import lombok.Data;
 
 import java.time.ZonedDateTime;
@@ -18,4 +19,5 @@ public class MovieDetailResponse {
     private String posterUrl;
     private boolean isOnShow;
     private List<String> genres;
+    List<UserProfileResponse> bookedFriends;
 }

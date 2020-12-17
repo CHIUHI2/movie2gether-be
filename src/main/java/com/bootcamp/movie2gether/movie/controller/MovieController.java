@@ -5,11 +5,16 @@ import com.bootcamp.movie2gether.movie.dto.MovieListingResponse;
 import com.bootcamp.movie2gether.movie.exception.MovieNotFoundException;
 import com.bootcamp.movie2gether.movie.mapper.MovieMapper;
 import com.bootcamp.movie2gether.movie.service.MovieService;
+import com.bootcamp.movie2gether.user.dto.UserProfileResponse;
+import com.bootcamp.movie2gether.user.entity.User;
+import com.bootcamp.movie2gether.user.exceptions.UserNotFoundException;
+import com.bootcamp.movie2gether.user.mapper.UserMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping(value = "/movies")
@@ -18,6 +23,9 @@ import java.util.List;
 public class MovieController {
     @Autowired
     private MovieMapper movieMapper;
+
+    @Autowired
+    private UserMapper userMapper;
 
     @Autowired
     private MovieService movieService;
@@ -59,8 +67,22 @@ public class MovieController {
         return Collections.emptyList();
     }
 
-    @GetMapping("/{id}")
-    public MovieDetailResponse getMovieDetail(@PathVariable String id) throws MovieNotFoundException {
-        return movieMapper.toResponse(movieService.findById(id));
+    @GetMapping(
+            path = "/{id}",
+            params = {
+                    "userId"
+            }
+    )
+    public MovieDetailResponse getMovieDetail(@PathVariable String id, @RequestParam("userId") String userId) throws MovieNotFoundException, UserNotFoundException {
+        MovieDetailResponse movieDetailResponse = movieMapper.toResponse(movieService.findById(id));
+
+        List<User> bookedFriends = movieService.findBookedFriends(userId, id);
+        List<UserProfileResponse> bookedFriendResponses = bookedFriends.stream()
+                .map((user) -> userMapper.toUserProfileResponse(user))
+                .collect(Collectors.toList());
+
+        movieDetailResponse.setBookedFriends(bookedFriendResponses);
+
+        return movieDetailResponse;
     }
 }

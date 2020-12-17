@@ -2,6 +2,8 @@ package com.bootcamp.movie2gether.movie.integration;
 
 import com.bootcamp.movie2gether.movie.entity.Movie;
 import com.bootcamp.movie2gether.movie.repository.MovieRepository;
+import com.bootcamp.movie2gether.user.entity.User;
+import com.bootcamp.movie2gether.user.repository.UserRepository;
 import org.bson.types.ObjectId;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
@@ -28,6 +30,9 @@ public class MovieIntegrationTest {
     @Autowired
     private MovieRepository movieRepository;
 
+    @Autowired
+    private UserRepository userRepository;
+
     private static final String apiBaseUrl = "/movies";
 
     @AfterEach
@@ -43,9 +48,13 @@ public class MovieIntegrationTest {
         movie.setTitle("testMovieTitle");
         movie = movieRepository.insert(movie);
 
+        User user = new User();
+        user = userRepository.insert(user);
+
         //when
         //then
-        mockMvc.perform(get(apiBaseUrl + "/" + movie.getId().toString()))
+        mockMvc.perform(get(apiBaseUrl + "/" + movie.getId().toString())
+                    .param("userId", user.getId().toString()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(movie.getId().toString()))
                 .andExpect(jsonPath("$.title").value("testMovieTitle"));
@@ -57,7 +66,8 @@ public class MovieIntegrationTest {
         //given
         //when
         //then
-        mockMvc.perform(get(apiBaseUrl + "/" + new ObjectId().toString()))
+        mockMvc.perform(get(apiBaseUrl + "/" + new ObjectId().toString())
+                    .param("userId", (new ObjectId()).toString()))
                 .andExpect(status().isNotFound());
     }
 
