@@ -10,12 +10,17 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.http.MediaType;
 
+import java.time.ZonedDateTime;
+import java.time.temporal.TemporalAmount;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -45,6 +50,7 @@ public class ReviewIntegrationTest {
     public void should_return_review_from_specific_user_of_specific_movie_when_get_review_given_userId_and_movieId() throws Exception {
         //given
         Review review = new Review();
+        review.setSessionId(new ObjectId("5fd9d86f03c5cf30ed507c59"));
         review.setMovieId(new ObjectId("5fd77c99e5f7d6417d7abac9"));
         review.setUserId(new ObjectId("5fd81ac741ea7016828cfd39"));
         review.setRating(4);
@@ -53,7 +59,7 @@ public class ReviewIntegrationTest {
 
         //when
         //then
-        mockMvc.perform(get("/reviews").param("movieId", "5fd77c99e5f7d6417d7abac9").param("userId","5fd81ac741ea7016828cfd39"))
+        mockMvc.perform(get("/reviews").param("sessionId", "5fd9d86f03c5cf30ed507c59").param("movieId", "5fd77c99e5f7d6417d7abac9").param("userId","5fd81ac741ea7016828cfd39"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.rating").value(4))
                 .andExpect(jsonPath("$.comment").value("funny movie"));
@@ -64,6 +70,7 @@ public class ReviewIntegrationTest {
     public void should_return_empty_review_response_when_get_review_given_invalid_userId_and_invalid_movieId() throws Exception {
         //given
         Review review = new Review();
+        review.setSessionId(new ObjectId("5fd9d86f03c5cf30ed507c59"));
         review.setMovieId(new ObjectId("5fd77c99e5f7d6417d7abac9"));
         review.setUserId(new ObjectId("5fd81ac741ea7016828cfd39"));
         review.setRating(4);
@@ -72,7 +79,7 @@ public class ReviewIntegrationTest {
 
         //when
         //then
-        mockMvc.perform(get("/reviews").param("movieId", "5fd77c99e5f7d6417d7abac1").param("userId","5fd81ac741ea7016828cfd31"))
+        mockMvc.perform(get("/reviews").param("sessionId", "5fd9d86f03c5cf30ed507c59").param("movieId", "5fd77c99e5f7d6417d7abac1").param("userId","5fd81ac741ea7016828cfd31"))
                 .andExpect(status().isOk());
     }
 
@@ -81,6 +88,7 @@ public class ReviewIntegrationTest {
     public void should_return_created_review_when_save_given_review() throws Exception {
         //given
         String reviewAsJson = "{\n" +
+                "    \"sessionId\": \"5fd9d86f03c5cf30ed507c59\",\n" +
                 "    \"userId\": \"5fd81ac741ea7016828cfd39\",\n" +
                 "    \"movieId\": \"5fd77c99e5f7d6417d7abac9\",\n" +
                 "    \"rating\": 5,\n" +
@@ -103,6 +111,7 @@ public class ReviewIntegrationTest {
     public void should_return_updated_review_when_update_given_review_id_and_review() throws Exception {
         //given
         Review review = new Review();
+        review.setSessionId(new ObjectId("5fd9d86f03c5cf30ed507c59"));
         review.setMovieId(new ObjectId("5fd77c99e5f7d6417d7abac9"));
         review.setUserId(new ObjectId("5fd81ac741ea7016828cfd39"));
         review.setRating(4);
@@ -110,6 +119,7 @@ public class ReviewIntegrationTest {
         reviewRepository.save(review);
 
         String updatedReviewAsJson = "{\n" +
+                "    \"sessionId\": \"5fd9d86f03c5cf30ed507c59\",\n" +
                 "    \"userId\": \"5fd81ac741ea7016828cfd40\",\n" +
                 "    \"movieId\": \"5fd77c99e5f7d6417d7abac4\",\n" +
                 "    \"rating\": 5,\n" +
@@ -129,7 +139,7 @@ public class ReviewIntegrationTest {
 
     @Test
     @WithMockUser(value = "spring")
-    public void should_return_one_review_when_get_review_by_movie_id_with_pagination_given_existed_movie_id_page() throws Exception {
+    public void should_return_oldest_review_when_get_review_by_movie_id_with_pagination_given_existed_movie_id_page() throws Exception {
         //given
         Movie movie = new Movie();
         movie = movieRepository.insert(movie);
@@ -137,11 +147,17 @@ public class ReviewIntegrationTest {
         List<Review> reviews = new ArrayList<>();
         for(int index = 0; index < 6 ; index++) {
             Review review = new Review();
+            review.setSessionId(new ObjectId());
             review.setMovieId(movie.getId());
             review.setUserId(new ObjectId());
+            review.setLastModifiedAt(ZonedDateTime.now().plusHours(index));
             review = reviewRepository.insert(review);
             reviews.add(review);
         }
+
+        reviews = reviews.stream()
+                .sorted(Comparator.comparing(Review::getLastModifiedAt, Comparator.reverseOrder()))
+                .collect(Collectors.toList());
 
         //when
         //then

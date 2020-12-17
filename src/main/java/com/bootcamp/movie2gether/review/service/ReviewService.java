@@ -10,6 +10,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.time.ZonedDateTime;
+
 
 @Service
 public class ReviewService {
@@ -34,12 +36,25 @@ public class ReviewService {
         return reviewRepository.findByMovieIdAndUserId(new ObjectId(movieId), new ObjectId(userId));
     }
 
+    public Review getBySessionIdAndMovieIdAndUserId(String sessionId, String movieId, String userId) {
+        if (!reviewRepository.existsBySessionIdAndMovieIdAndUserId(new ObjectId(sessionId), new ObjectId(movieId), new ObjectId(userId))) {
+            return null;
+        }
+        return reviewRepository.findBySessionIdAndMovieIdAndUserId(new ObjectId(sessionId), new ObjectId(movieId), new ObjectId(userId));
+    }
+
     public Review save(Review review) {
+        ZonedDateTime currentDateTime = ZonedDateTime.now();
+        review.setCreatedAt(currentDateTime);
+        review.setLastModifiedAt(currentDateTime);
+
         return reviewRepository.save(review);
     }
 
     public Review update(String reviewId, Review review) {
         review.setId(new ObjectId(reviewId));
+        review.setLastModifiedAt(ZonedDateTime.now());
+
         return reviewRepository.save(review);
     }
 }

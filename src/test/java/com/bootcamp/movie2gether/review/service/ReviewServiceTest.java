@@ -42,11 +42,11 @@ public class ReviewServiceTest {
     public void should_return_review_from_a_specific_user_of_a_specific_movie_when_get_by_movieId_and_userId_given_movieId_and_userId() {
         //given
         final Review expected = new Review();
-        when(reviewRepository.existsByMovieIdAndUserId(any(),any())).thenReturn(true);
-        when(reviewRepository.findByMovieIdAndUserId(any(),any())).thenReturn(expected);
+        when(reviewRepository.existsBySessionIdAndMovieIdAndUserId(any(),any(),any())).thenReturn(true);
+        when(reviewRepository.findBySessionIdAndMovieIdAndUserId(any(), any(),any())).thenReturn(expected);
 
         //when
-        final Review review = reviewService.getByMovieIdAndUserId("5fd77c99e5f7d6417d7abac4","5fd81ac741ea7016828cfd40");
+        final Review review = reviewService.getBySessionIdAndMovieIdAndUserId("5fd9d86f03c5cf30ed507c59", "5fd77c99e5f7d6417d7abac4","5fd81ac741ea7016828cfd40");
 
         //then
         assertEquals(expected,review);
