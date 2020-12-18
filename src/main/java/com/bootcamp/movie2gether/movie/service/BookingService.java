@@ -65,7 +65,12 @@ public class BookingService {
     public Page<SessionBookingDetail> getPagedSessionBookingDetailByUserId(ObjectId userId, Integer page, Integer pageSize) {
         Pageable pageable = PageRequest.of(page, pageSize, Sort.by("sessionDetail.startTime").descending());
         List<SessionBookingDetail> sessionBookingDetailsByUserId = bookingRepository.getSessionBookingDetailByUserId(userId.toHexString(), pageable);
-        Long count = bookingRepository.countSessionBookingDetailByUserId(userId.toHexString());
+
+        Long count = 0L;
+        try {
+            count = bookingRepository.countSessionBookingDetailByUserId(userId.toHexString());
+        } catch (NullPointerException ignored) {
+        }
         return new PageImpl<>(sessionBookingDetailsByUserId, pageable, count);
 
     }

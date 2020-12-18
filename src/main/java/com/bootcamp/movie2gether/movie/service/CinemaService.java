@@ -25,7 +25,11 @@ public class CinemaService {
     public Page<Cinema> getPagedCinemasByMovieId(ObjectId movieId, Integer page, Integer pageSize) {
         Pageable pageable = PageRequest.of(page, pageSize, Sort.by("name").ascending());
         List<Cinema> cinemasByMovieId = movieRepository.getCinemasByMovieId(movieId.toHexString(), pageable);
-        long count = movieRepository.countCinemasByMovieId(movieId.toHexString());
+        long count = 0L;
+        try {
+            count = movieRepository.countCinemasByMovieId(movieId.toHexString());
+        } catch (NullPointerException ignored) {
+        }
         return new PageImpl<>(
                 cinemasByMovieId,
                 pageable,
